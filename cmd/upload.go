@@ -28,27 +28,15 @@ import (
 	h "goGEM-Handler"
 )
 
-var username string
-var year int
-var teamname string
-var wpurl string
-var password string
-var loginURL string
-var logoutURL string
-var offset string
-var force bool
-var clean bool
-
 // uploadCmd represents the upload command
 var uploadCmd = &cobra.Command{
 	Use:   "upload",
 	Short: "Upload your WordPress Page to iGEM",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `Curls every URL that is reachable from the specified entry URL.
+	Replaces every relative Link on the WP-Page with static links pointing to the iGEM Servers.
+	If you want to clone your Wiki to https://2021.igem.org/Team:TU_Darmstadt/test/[...] then the command would be:
+	gogem upload -u "[Your Username]" -y 2021 -t "TU_Darmstadt" -w "[Your WP Wiki]" -o "test"` ,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get necessary data
 
@@ -64,7 +52,7 @@ to quickly create a Cobra application.`,
 
 		// Establish connection with iGEM Servers
 		println("Logging in...")
-		session, err := h.NewHandler(year, username, password, teamname, offset, loginURL, logoutURL)
+		session, err := h.NewHandler(year, username, password, teamname, offset, loginURL, logoutURL, PrefixPageURL)
 		if err != nil {
 			if err.Error() == "loginFailed" {
 				println("Login failed, please try again")
@@ -111,6 +99,7 @@ func init() {
 	uploadCmd.Flags().StringVarP(&offset, "offset", "o", "", "Offset from your Teams Namespace root")
 	uploadCmd.Flags().StringVarP(&loginURL, "login", "L", "https://igem.org/Login2", "LoginURL, set by default")
 	uploadCmd.Flags().StringVarP(&logoutURL, "logout", "l", "https://igem.org/Logout", "LogoutURL, set by default")
+	uploadCmd.Flags().StringVarP(&PrefixPageURL, "prefix", "P", fmt.Sprintf("https://%d.igem.org/wiki/index.php?title=Special:PrefixIndex", year), "Special Page 'All Pages with prefix', set by default")
 	uploadCmd.Flags().BoolVarP(&force, "force", "f", false, "Force")
 	uploadCmd.Flags().BoolVarP(&clean, "clean", "c", true, "Clean")
 	// uploadCmd.Flags().StringVarP(&password, "password", "p", "", "Password(required)")
