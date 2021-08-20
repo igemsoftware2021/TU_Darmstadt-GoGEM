@@ -18,8 +18,8 @@ package cmd
 import (
 	"fmt"
 
+	gogemgostatic "github.com/Jackd4w/goGEM/pkg/GoStatic"
 	"github.com/spf13/cobra"
-	"goGEM-GoStatic"
 )
 
 var project_dir string

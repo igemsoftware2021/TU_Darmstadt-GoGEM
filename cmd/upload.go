@@ -23,9 +23,9 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
-	fh "goGEM-FileHandling"
-	wp "goGEM-GoStatic"
-	h "goGEM-Handler"
+	fh "github.com/Jackd4w/goGEM/pkg/FileHandling"
+	wp "github.com/Jackd4w/goGEM/pkg/GoStatic"
+	h "github.com/Jackd4w/goGEM/pkg/Handler"
 )
 
 // uploadCmd represents the upload command

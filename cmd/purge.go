@@ -18,8 +18,9 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	h "goGEM-Handler"
 	"syscall"
+
+	h "github.com/Jackd4w/goGEM/pkg/Handler"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
