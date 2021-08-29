@@ -3,7 +3,7 @@
 ## About
 
 goGEM is a tool designed to make the deployment process of your iGEM-Wiki as easy as possible.
-It is able to automatically fetch a page from a WordPress Instance hosted by your team. If you use this tool please give credit to me and link to this repo (github.com/Jackd4w/goGEM).
+It is able to automatically fetch a page from a WordPress Instance hosted by your team. If you use this tool please give credit to me and link to this repo (https://github.com/Jackd4w/goGEM).
 
 ## Installation
 
