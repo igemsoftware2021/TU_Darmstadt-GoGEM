@@ -32,7 +32,8 @@ var purgeCmd = &cobra.Command{
 	Short: "CAUTION!! DESTRUCTIVE ACTION! Purge your Wiki Pages from the Server",
 	Long: `CAUTION!! DESTRUCTIVE ACTION! Purge your Wiki from the iGEM Servers.
 	Files can not be deleted, but pages can be overwritten with no content. Usefull for cleaning up before setting up your actual Wiki.
-	THIS IS A DESTRUCTIVE ACTION, you will be required to re enter your password.`,
+	THIS IS A DESTRUCTIVE ACTION, you will be required to re enter your password.
+	Usage: gogem purge -u "[Username]" -y [Wiki Year] -t "[Teamname]" -o "[Offset]"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		println("This is a DESTRUCTIVE ACTION, you will be required to re enter your password after you logged in. If you want to abort please hit 'Ctrl + C' on your keyboard or close the shell")
 		fmt.Print("Enter Password: ")
