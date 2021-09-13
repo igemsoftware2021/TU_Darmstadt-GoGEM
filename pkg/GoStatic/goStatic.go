@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -131,6 +132,14 @@ func crawlDomain(url string) (pages, remove map[string]string, err error) { // C
 
 	c.OnHTML("audio[src]", func(e *colly.HTMLElement) {
 		link := e.Attr("src")
+		c.Visit(e.Request.AbsoluteURL(link))
+	})
+
+	c.OnHTML("header[style]", func(e *colly.HTMLElement) { // Fix for featured images
+		link := e.Attr("style")
+		urlRegex := regexp.MustCompile(`.*url\((.*?)\).*;`)
+		replace := `${1}`
+		link = urlRegex.ReplaceAllString(link, replace)
 		c.Visit(e.Request.AbsoluteURL(link))
 	})
 

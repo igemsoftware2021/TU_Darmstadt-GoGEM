@@ -109,14 +109,24 @@ func allFilesInDir(path string) ([]string, error) {
 func findAllFileLinks(newContent string) []string {
 	var fileLinks []string
 	srcRegEx := regexp.MustCompile(`src=("|')(.*?)("|')`) // Regex to find all src attributes
-
 	srcLinks := srcRegEx.FindAllString(newContent, -1) // Find all src attributes
+	
 	for _, link := range srcLinks {
 		link = srcRegEx.ReplaceAllString(link, `${2}`) // Replace src attribute with just the path
 		if strings.Contains(link, "assets") {          // If link is not a css, js, json or html file, append it to fileLinks)
 			fileLinks = append(fileLinks, link) // Append all links to fileLinks
 		}
 	}
+	// Fix for featured images
+	urlRegEx := regexp.MustCompile(`url\((.*?)\)`) // Regex to find all url attributes
+	urlLinks := urlRegEx.FindAllString(newContent, -1) // Find all url attributes
+	for _, link := range urlLinks {
+		link = urlRegEx.ReplaceAllString(link, `${1}`) // Replace url attribute with just the path
+		if strings.Contains(link, "assets") {          // If link is not a css, js, json or html file, append it to fileLinks)
+			fileLinks = append(fileLinks, link) // Append all links to fileLinks
+		}
+	}
+
 	fileLinks = removeDuplicateStr(fileLinks)
 	return fileLinks // Return new array
 }
@@ -223,14 +233,16 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 
 		if !blacklist[path] {
 			url, err := client.UploadFile(path, false)
-			if err.Error() == "alreadyUploadedInThisSession" || err.Error() == "fileAlreadyUploaded" {
-				blacklist[path] = true
-				res_url = client.GetFileUrl(url)
-				result[link] = res_url
-				continue
-			} else if err != nil {
-				// return nil, err
-				println("Error " + err.Error() + " uploading file: " + path)
+			if err != nil {
+				if err.Error() == "alreadyUploadedInThisSession" || err.Error() == "fileAlreadyUploaded" {
+					blacklist[path] = true
+					res_url = client.GetFileUrl(url)
+					result[link] = res_url
+					continue
+					// return nil, err
+				} else{
+					println("Error " + err.Error() + " uploading file: " + path)
+				}
 			}
 			res_url = client.GetFileUrl(url)
 			
@@ -238,6 +250,7 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 		result[link] = res_url
 		blacklist[path] = true
 	}
+	
 	return result, nil
 }
 
