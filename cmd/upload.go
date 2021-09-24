@@ -65,7 +65,7 @@ var uploadCmd = &cobra.Command{
 		println("Logged in")
 		// Clone WordPress Page
 		println("Cloning WordPress Page...")
-		project_path, err := wp.GoStatic(wpurl, "")
+		project_path, err := wp.GoStatic(wpurl, "", insecure)
 		if err != nil {
 			println(err.Error())
 			return
@@ -102,6 +102,7 @@ func init() {
 	uploadCmd.Flags().StringVarP(&PrefixPageURL, "prefix", "P", fmt.Sprintf("https://%d.igem.org/wiki/index.php?title=Special:PrefixIndex", year), "Special Page 'All Pages with prefix', set by default")
 	uploadCmd.Flags().BoolVarP(&force, "force", "f", false, "Force")
 	uploadCmd.Flags().BoolVarP(&clean, "clean", "c", true, "Clean")
+	uploadCmd.Flags().BoolVarP(&insecure, "insecure", "i", false, "Ignores HTTPS Certificate warnings")
 	// uploadCmd.Flags().StringVarP(&password, "password", "p", "", "Password(required)")
 	// Here you will define your flags and configuration settings.
 

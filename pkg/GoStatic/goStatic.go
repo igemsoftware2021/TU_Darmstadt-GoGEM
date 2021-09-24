@@ -1,6 +1,7 @@
 package gogemgostatic
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -13,7 +14,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
-//TODO If you use local fonts, place them manually in the fonts folder in the created project
+//TODO Do not use local fonts, upload your fonts to igem and reference them in the CSS
 /*
 
 	Download all files from the given url and save them to the given path.
@@ -22,14 +23,19 @@ import (
 	This can lead to problems if files are only included via a css file (aka fonts) or via js files
 
 */
-func GoStatic(url, path string) (string,error) {
+func GoStatic(url, path string, insecure bool) (string,error) {
 	url = sanitize_url(url)
+
+	if insecure {
+		println("Warning: Using insecure connection")
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
 	project_path, err := createProject(path, url)
 	if err != nil {
 		return "", err
 	}
-
-	pages, remove, err := crawlDomain(url)
+	pages, remove, err := crawlDomain(url, insecure)
 	if err != nil {
 		return "", err
 	}
@@ -39,6 +45,12 @@ func GoStatic(url, path string) (string,error) {
 		return "", err
 	}
 
+	for key, value := range pages {
+		println(key + ": " + value)
+	}
+
+	println("-------------------------")
+	
 	err = fetchPages(pages, remove, project_path)
 	if err != nil {
 		return "", err
@@ -92,7 +104,7 @@ func createProject(path, url string) (string, error) {
 	Using colly.
 
 */
-func crawlDomain(url string) (pages, remove map[string]string, err error) { // Crawl domain
+func crawlDomain(url string, insecure bool) (pages, remove map[string]string, err error) { // Crawl domain
 	pages = make(map[string]string) // Map of all found page links to file/type
 	remove = make(map[string]string) // Map of all links that need to be removed
 
@@ -104,6 +116,12 @@ func crawlDomain(url string) (pages, remove map[string]string, err error) { // C
 	c := colly.NewCollector(
 		colly.AllowedDomains(domain),
 	)
+
+	if insecure {
+		c.WithTransport(&http.Transport{
+						TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+					})
+				}
 
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) { // Register callback functions for all types of links
 		link := e.Attr("href")
@@ -154,7 +172,6 @@ func crawlDomain(url string) (pages, remove map[string]string, err error) { // C
 			remove[r.Request.URL.String()] = ""
 		}
 	})
-
 	c.Visit(url) // Start Crawling from the given URL
 
 	return pages, remove, nil
@@ -212,6 +229,7 @@ func createFileLinks(pages map[string]string, url string) error {
 func fetchPages(pages, remove map[string]string, path string) error {
 
 	for link, rel_link := range pages {
+		println(link)
 		resp, err := http.Get(link)
 		if err != nil {
 			return err

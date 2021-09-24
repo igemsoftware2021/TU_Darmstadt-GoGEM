@@ -35,7 +35,7 @@ var fetchWPCmd = &cobra.Command{
 		fmt.Println("Cloning WordPress Site")
 		fmt.Println("URL:", args[0])
 
-		gogemgostatic.GoStatic(args[0], project_dir)
+		gogemgostatic.GoStatic(args[0], project_dir, insecure)
 	},
 }
 
@@ -43,6 +43,7 @@ func init() {
 	rootCmd.AddCommand(fetchWPCmd)
 
 	fetchWPCmd.Flags().StringVarP(&project_dir, "dir", "d", "", "Project Directory")
+	fetchWPCmd.Flags().BoolVarP(&insecure, "insecure", "i", false, "Ignores HTTPS Certificate warnings")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
