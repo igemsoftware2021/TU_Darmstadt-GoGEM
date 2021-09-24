@@ -35,15 +35,15 @@ var uploadCmd = &cobra.Command{
 	Long: `Curls every URL that is reachable from the specified entry URL.
 	Replaces every relative Link on the WP-Page with static links pointing to the iGEM Servers.
 	If you want to clone your Wiki to https://2021.igem.org/Team:TU_Darmstadt/test/[...] then the command would be:
-	gogem upload -u "[Your Username]" -y 2021 -t "TU_Darmstadt" -w "[Your WP Wiki]" -o "test"` ,
+	gogem upload -u "[Your Username]" -y 2021 -t "TU_Darmstadt" -w "[Your WP Wiki]" -o "test"`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get necessary data
 
 		println(fmt.Sprintf("Upload %s for %s to https://%d.igem.org/Team:%s", wpurl, username, year, teamname))
 		fmt.Print("Enter Password: ")
-    	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-    	if err != nil {
+		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
 			println(err.Error())
 			return
 		}

@@ -25,8 +25,6 @@ func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 		return err
 	}
 
-
-
 	for _, filepath := range files {
 		file, err := os.Open(filepath) // Open file
 		if err != nil {
@@ -109,8 +107,8 @@ func allFilesInDir(path string) ([]string, error) {
 func findAllFileLinks(newContent string) []string {
 	var fileLinks []string
 	srcRegEx := regexp.MustCompile(`src=("|')(.*?)("|')`) // Regex to find all src attributes
-	srcLinks := srcRegEx.FindAllString(newContent, -1) // Find all src attributes
-	
+	srcLinks := srcRegEx.FindAllString(newContent, -1)    // Find all src attributes
+
 	for _, link := range srcLinks {
 		link = srcRegEx.ReplaceAllString(link, `${2}`) // Replace src attribute with just the path
 		if strings.Contains(link, "assets") {          // If link is not a css, js, json or html file, append it to fileLinks)
@@ -118,7 +116,7 @@ func findAllFileLinks(newContent string) []string {
 		}
 	}
 	// Fix for featured images
-	urlRegEx := regexp.MustCompile(`url\((.*?)\)`) // Regex to find all url attributes
+	urlRegEx := regexp.MustCompile(`url\((.*?)\)`)     // Regex to find all url attributes
 	urlLinks := urlRegEx.FindAllString(newContent, -1) // Find all url attributes
 	for _, link := range urlLinks {
 		link = urlRegEx.ReplaceAllString(link, `${1}`) // Replace url attribute with just the path
@@ -198,25 +196,25 @@ But even if we do that, iGEM tries to prevent the unintended load of JS by check
 
 */
 func replacePageExtensions(newContent string) string {
-	cssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.css)("|')`)      // Regex to find all relative referenced css files
-	mincssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.min\.css)("|')`)      // Regex to find all relative referenced css files
-	jsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.js)(\?.*?)?("|')`) // Regex to find all relative referenced js files
-	minjsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.min\.js)(\?.*?)?("|')`) 
-	indexRegEx := regexp.MustCompile(`index\.html`)       // Regex to find all href and src attributes that reference index.html
+	cssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.css)("|')`)         // Regex to find all relative referenced css files
+	mincssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.min\.css)("|')`) // Regex to find all relative referenced css files
+	jsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.js)(\?.*?)?("|')`)    // Regex to find all relative referenced js files
+	minjsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.min\.js)(\?.*?)?("|')`)
+	indexRegEx := regexp.MustCompile(`index\.html`) // Regex to find all href and src attributes that reference index.html
 	htmlRegEx := regexp.MustCompile(`\.html`)
 
-	cssReplace := `${1}?action=raw&ctype=text/css${3}` // Replace all relative css paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
+	cssReplace := `${1}?action=raw&ctype=text/css${3}`        // Replace all relative css paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
 	mincssReplace := `${1}-min?action=raw&ctype=text/css${3}` // Replace all relative css paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
 	jsReplace := `${1}?action=raw&ctype=text/javascript${3}`
 	minjsReplace := `${1}-min?action=raw&ctype=text/javascript${3}`
 	htmlReplace := ``
 
-	newContent = mincssRegex.ReplaceAllString(newContent, mincssReplace)   // Replace all '.css' in relative paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
-	newContent = cssRegex.ReplaceAllString(newContent, cssReplace)   // Replace all '.css' in relative paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
-	newContent = minjsRegex.ReplaceAllString(newContent, minjsReplace) // Replace all '.min.js' in relative paths with ?action=raw&ctype=text/javascript, requesting the raw file from the server with the right content type
-	newContent = jsRegex.ReplaceAllString(newContent, jsReplace)     // Replace all '.js' in relative paths with ?action=raw&ctype=text/javascript, requesting the raw file from the server with the right content type
-	newContent = indexRegEx.ReplaceAllString(newContent, htmlReplace) // Replace all href and src attributes that reference index.html with empty string
-	newContent = htmlRegEx.ReplaceAllString(newContent, htmlReplace) // Replace all '.html' in relative paths with empty string, so the raw file is requested from the server without the .html extension
+	newContent = mincssRegex.ReplaceAllString(newContent, mincssReplace) // Replace all '.css' in relative paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
+	newContent = cssRegex.ReplaceAllString(newContent, cssReplace)       // Replace all '.css' in relative paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
+	newContent = minjsRegex.ReplaceAllString(newContent, minjsReplace)   // Replace all '.min.js' in relative paths with ?action=raw&ctype=text/javascript, requesting the raw file from the server with the right content type
+	newContent = jsRegex.ReplaceAllString(newContent, jsReplace)         // Replace all '.js' in relative paths with ?action=raw&ctype=text/javascript, requesting the raw file from the server with the right content type
+	newContent = indexRegEx.ReplaceAllString(newContent, htmlReplace)    // Replace all href and src attributes that reference index.html with empty string
+	newContent = htmlRegEx.ReplaceAllString(newContent, htmlReplace)     // Replace all '.html' in relative paths with empty string, so the raw file is requested from the server without the .html extension
 
 	return newContent
 }
@@ -240,17 +238,17 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 					result[link] = res_url
 					continue
 					// return nil, err
-				} else{
+				} else {
 					println("Error " + err.Error() + " uploading file: " + path)
 				}
 			}
 			res_url = client.GetFileUrl(url)
-			
+
 		}
 		result[link] = res_url
 		blacklist[path] = true
 	}
-	
+
 	return result, nil
 }
 

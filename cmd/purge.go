@@ -37,14 +37,14 @@ var purgeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		println("This is a DESTRUCTIVE ACTION, you will be required to re enter your password after you logged in. If you want to abort please hit 'Ctrl + C' on your keyboard or close the shell")
 		fmt.Print("Enter Password: ")
-    	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-    	if err != nil {
+		bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
 			println(err.Error())
 			return
 		}
 		println("")
 		password = string(bytePassword)
-		
+
 		// Establish connection with iGEM Servers
 		println("Logging in...")
 		session, err := h.NewHandler(year, username, password, teamname, offset, loginURL, logoutURL, PrefixPageURL)
@@ -60,7 +60,7 @@ var purgeCmd = &cobra.Command{
 		println("Logged in")
 
 		println(fmt.Sprintf("Getting all Pages with prefix %s/%s from https://%d.igem.org", teamname, offset, year))
-		pages, err := session.GetAllPages();
+		pages, err := session.GetAllPages()
 		if err != nil {
 			println(err.Error())
 			return
@@ -76,12 +76,12 @@ var purgeCmd = &cobra.Command{
 		println("-------------------------------------------------------------")
 		print("Re-Enter your password to continue:")
 		reEnteredPassword, err := term.ReadPassword(int(syscall.Stdin))
-    	if err != nil {
+		if err != nil {
 			println(err.Error())
 			return
 		}
 		println("")
-		if bytes.Compare(reEnteredPassword, bytePassword) != 0 {
+		if !bytes.Equal(reEnteredPassword, bytePassword) {
 			println("Password Mismatch, aborting...")
 			return
 		}

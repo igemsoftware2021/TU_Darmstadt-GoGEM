@@ -15,7 +15,7 @@ type Handler struct {
 	alreadyUploaded map[string]bool
 	loginURL        string
 	logoutURL       string
-	prefixURL	   string
+	prefixURL       string
 }
 
 /*
@@ -70,7 +70,7 @@ func (h Handler) Upload(filepath, offset string, force bool) error {
 	if !h.loggedIn() {
 		return errors.New("notLoggedIn")
 	}
-	_, err := api.Upload(h.Session, h.year, h.teamname, filepath, h.offset + offset, false, force)
+	_, err := api.Upload(h.Session, h.year, h.teamname, filepath, h.offset+offset, false, force)
 	return err
 }
 
@@ -119,9 +119,10 @@ func (h Handler) GetAllPages() ([]string, error) {
 /*
 Overwrite the specified pageurl with an empty string, effectively deleting the page (also marking it for eventuell cleanup processes from the hoster side due to it having no user content)
 */
-func (h Handler) DeletePage(pageurl string) error { 
+func (h Handler) DeletePage(pageurl string) error {
 	return api.DeletePage(pageurl, h.year, h.Session)
 }
+
 /*
 ------------------------------------------------------------------------------
 Internal Functions

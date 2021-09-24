@@ -23,7 +23,7 @@ import (
 	This can lead to problems if files are only included via a css file (aka fonts) or via js files
 
 */
-func GoStatic(url, path string, insecure bool) (string,error) {
+func GoStatic(url, path string, insecure bool) (string, error) {
 	url = sanitize_url(url)
 
 	if insecure {
@@ -50,7 +50,7 @@ func GoStatic(url, path string, insecure bool) (string,error) {
 	}
 
 	println("-------------------------")
-	
+
 	err = fetchPages(pages, remove, project_path)
 	if err != nil {
 		return "", err
@@ -105,7 +105,7 @@ func createProject(path, url string) (string, error) {
 
 */
 func crawlDomain(url string, insecure bool) (pages, remove map[string]string, err error) { // Crawl domain
-	pages = make(map[string]string) // Map of all found page links to file/type
+	pages = make(map[string]string)  // Map of all found page links to file/type
 	remove = make(map[string]string) // Map of all links that need to be removed
 
 	domain, err := urlToDomain(url)
@@ -119,9 +119,9 @@ func crawlDomain(url string, insecure bool) (pages, remove map[string]string, er
 
 	if insecure {
 		c.WithTransport(&http.Transport{
-						TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-					})
-				}
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		})
+	}
 
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) { // Register callback functions for all types of links
 		link := e.Attr("href")
@@ -177,6 +177,7 @@ func crawlDomain(url string, insecure bool) (pages, remove map[string]string, er
 	return pages, remove, nil
 
 }
+
 /*
 
 	Deconstruct given url to relative path, while deligating by filetype to different subfolders.
@@ -221,6 +222,7 @@ func createFileLinks(pages map[string]string, url string) error {
 	return nil
 
 }
+
 /*
 	Fetch all pages from the given list of pages and create the files
 	Reomve all URLs from the files specified in the remove list
@@ -242,13 +244,13 @@ func fetchPages(pages, remove map[string]string, path string) error {
 		resp_body := string(body)
 
 		ordered_key_list_pages := orderMapKeys(pages)
-		ordered_key_list_remove :=  orderMapKeys(remove)
+		ordered_key_list_remove := orderMapKeys(remove)
 
-		for _,key := range ordered_key_list_remove {
+		for _, key := range ordered_key_list_remove {
 			resp_body = strings.ReplaceAll(resp_body, key, "")
 		}
 
-		for _,key := range ordered_key_list_pages {
+		for _, key := range ordered_key_list_pages {
 			rep_rel_link := pages[key]
 
 			if strings.Contains(rel_link, "css") || strings.Contains(rel_link, "js") || strings.Contains(rel_link, "assets") {
@@ -350,7 +352,7 @@ func orderMapKeys(m map[string]string) []string {
 	for k := range m {
 		keys = append(keys, k)
 	}
-		sort.Slice(keys, func(i, j int) bool {
+	sort.Slice(keys, func(i, j int) bool {
 		return len(keys[i]) > len(keys[j])
 	})
 	return keys
