@@ -37,6 +37,7 @@ var offset string
 var force bool
 var clean bool
 var insecure bool
+var redirect bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

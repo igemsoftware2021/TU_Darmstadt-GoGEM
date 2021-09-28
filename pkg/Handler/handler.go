@@ -70,7 +70,13 @@ func (h Handler) Upload(filepath, offset string, force bool) error {
 	if !h.loggedIn() {
 		return errors.New("notLoggedIn")
 	}
-	_, err := api.Upload(h.Session, h.year, h.teamname, filepath, h.offset+offset, false, force)
+	url, err := api.Upload(h.Session, h.year, h.teamname, filepath, h.offset+offset, false, force)
+	println(url)
+	return err
+}
+
+func (h Handler) Redirect(source, target string) error{
+	_, err := api.Redirect(h.Session, h.year, h.teamname, source, target)
 	return err
 }
 

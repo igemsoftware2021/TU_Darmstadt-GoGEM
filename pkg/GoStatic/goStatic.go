@@ -45,12 +45,6 @@ func GoStatic(url, path string, insecure bool) (string, error) {
 		return "", err
 	}
 
-	for key, value := range pages {
-		println(key + ": " + value)
-	}
-
-	println("-------------------------")
-
 	err = fetchPages(pages, remove, project_path)
 	if err != nil {
 		return "", err
@@ -233,7 +227,6 @@ func createFileLinks(pages map[string]string, url string) error {
 func fetchPages(pages, remove map[string]string, path string) error {
 
 	for link, rel_link := range pages {
-		println(link)
 		resp, err := http.Get(link)
 		if err != nil {
 			return err

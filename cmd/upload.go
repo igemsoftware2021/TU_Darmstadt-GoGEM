@@ -26,6 +26,7 @@ import (
 	fh "github.com/Jackd4w/goGEM/pkg/FileHandling"
 	wp "github.com/Jackd4w/goGEM/pkg/GoStatic"
 	h "github.com/Jackd4w/goGEM/pkg/Handler"
+	r "github.com/Jackd4w/goGEM/pkg/Redirect"
 )
 
 // uploadCmd represents the upload command
@@ -63,6 +64,11 @@ var uploadCmd = &cobra.Command{
 		}
 		defer session.Logout()
 		println("Logged in")
+
+		if redirect {
+			println("Creating redirects...")
+			r.CreateRedirects(session)
+		}
 		// Clone WordPress Page
 		println("Cloning WordPress Page...")
 		project_path, err := wp.GoStatic(wpurl, "", insecure)
@@ -103,6 +109,7 @@ func init() {
 	uploadCmd.Flags().BoolVarP(&force, "force", "f", false, "Force")
 	uploadCmd.Flags().BoolVarP(&clean, "clean", "c", true, "Clean")
 	uploadCmd.Flags().BoolVarP(&insecure, "insecure", "i", false, "Ignores HTTPS Certificate warnings")
+	uploadCmd.Flags().BoolVarP(&redirect, "redirect", "r", false, "Creates redirects from upper to lowercase")
 	// uploadCmd.Flags().StringVarP(&password, "password", "p", "", "Password(required)")
 	// Here you will define your flags and configuration settings.
 

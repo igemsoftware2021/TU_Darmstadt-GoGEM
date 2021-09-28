@@ -245,6 +245,7 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 			res_url = client.GetFileUrl(url)
 
 		}
+		println("Uploaded file: " + res_url)
 		result[link] = res_url
 		blacklist[path] = true
 	}
