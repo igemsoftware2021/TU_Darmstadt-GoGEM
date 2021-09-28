@@ -82,7 +82,7 @@ func CheckCriteria(team string, year int, url bool) (string, error) {
 			}
 			body := string(byteBody)
 
-			if strings.Contains(body, `cnoarticletext`) {
+			if strings.Contains(body, `cnoarticletext`) || strings.Contains(body, `purged-page-empty`) {
 				if url {
 					result += medal + ": Page is Empty, check your URLs! " + link + "\n"
 				} else {

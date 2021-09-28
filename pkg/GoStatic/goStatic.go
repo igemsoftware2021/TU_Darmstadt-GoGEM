@@ -125,7 +125,9 @@ func crawlDomain(url string, insecure bool) (pages, remove map[string]string, er
 
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) { // Register callback functions for all types of links
 		link := e.Attr("href")
-		c.Visit(e.Request.AbsoluteURL(link))
+		if !strings.Contains(link, "impressum") {
+			c.Visit(e.Request.AbsoluteURL(link))
+		}
 	})
 
 	c.OnHTML("link[href]", func(e *colly.HTMLElement) {

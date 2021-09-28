@@ -256,11 +256,20 @@ func pageUpload(filepath string, client *h.Handler) error {
 	offset := ""
 	filename := filepath[strings.LastIndex(filepath, "/")+1:]
 	if isPage(filename) {
-		if strings.Contains(filename, ".css") {
-			offset = "/css"
-		} else if strings.Contains(filename, ".js") {
-			offset = "/js"
+		if offset != "" {
+			if strings.Contains(filename, ".css") {
+				offset = "/css"
+			} else if strings.Contains(filename, ".js") {
+				offset = "/js"
+			}
+		} else {
+			if strings.Contains(filename, ".css") {
+				offset = "css"
+			} else if strings.Contains(filename, ".js") {
+				offset = "js"
+			}
 		}
+
 		filepath = strings.ReplaceAll(filepath, "/", `\`)
 		err := client.Upload(filepath, offset, false)
 		if err != nil {
