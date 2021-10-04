@@ -15,6 +15,14 @@ import (
 )
 
 //TODO Do not use local fonts, upload your fonts to igem and reference them in the CSS
+//TODO Add the names of the fonts you are using to the follownig list, as well as the url to the font file on the iGEM Servers
+
+var fonts = map[string]string{
+	"Philosopher": "url(https://2021.igem.org/wiki/images/e/ef/T--TU_Darmstadt--Philosopher.woff)",
+	"Montserrat": "url(https://2021.igem.org/wiki/images/4/42/T--TU_Darmstadt--Montserrat.woff)",
+	"Raleway": "url(https://2021.igem.org/wiki/images/5/53/T--TU_Darmstadt--Raleway.woff)",
+}
+
 /*
 
 	Download all files from the given url and save them to the given path.
@@ -200,6 +208,11 @@ func createFileLinks(pages map[string]string, url string) error {
 			fragments = delete_empty(fragments)
 			filename := fragments[len(fragments)-1]
 			filename = strings.Split(filename, "?")[0]
+			if strings.Contains(filename, "min") {
+				filename = strings.Split(filename, ".")[0] + ".min.css"
+			} else {
+				filename = strings.Split(filename, ".")[0] + ".css"
+			}
 			pages[link] = "./css/" + filename
 		} else if strings.Contains(filetype, "javascript") {
 			fragments := strings.Split(link, "/")
@@ -240,19 +253,32 @@ func fetchPages(pages, remove map[string]string, path string) error {
 
 		ordered_key_list_pages := orderMapKeys(pages)
 		ordered_key_list_remove := orderMapKeys(remove)
-
+		
+		// Remove all URLs from the files specified in the remove list
 		for _, key := range ordered_key_list_remove {
 			resp_body = strings.ReplaceAll(resp_body, key, "")
 		}
 
+		// Replace all absolut links given in the pages list with relative links, which are at this time the second parameter in the pages list
 		for _, key := range ordered_key_list_pages {
 			rep_rel_link := pages[key]
 
-			if strings.Contains(rel_link, "css") || strings.Contains(rel_link, "js") || strings.Contains(rel_link, "assets") {
+			if strings.Contains(rel_link, "css") || strings.Contains(rel_link, "js") || strings.Contains(rel_link, "assets") { // If the link is in a subfolder we need to add a directory change to the relative link
 				rep_rel_link = strings.ReplaceAll(rep_rel_link, "./", "./../")
 				resp_body = strings.ReplaceAll(resp_body, key, rep_rel_link)
 			} else {
 				resp_body = strings.ReplaceAll(resp_body, key, rep_rel_link)
+			}
+		}
+
+		filetype := resp.Header.Get("Content-Type") // Get the filetype of the response
+		if filetype == "image/svg+xml" || (!strings.Contains(filetype, "json") && !strings.Contains(filetype, "xml")) { // Skipping JSON and XML files, as JSON is the response from the WP REST API, and XML the response of the legacy XML-RPC API
+			if strings.Contains(path, "svg"){
+				for key, value := range fonts {
+					if strings.Contains(resp_body, key) {
+						resp_body = strings.ReplaceAll(resp_body, key, value)
+					}
+				}
 			}
 		}
 

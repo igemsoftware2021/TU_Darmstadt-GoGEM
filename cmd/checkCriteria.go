@@ -49,6 +49,6 @@ func init() {
 	checkCriteriaCMD.MarkFlagRequired("year")
 	checkCriteriaCMD.Flags().StringVarP(&teamname, "teamname", "t", "", "Teamname(required)")
 	checkCriteriaCMD.MarkFlagRequired("teamname")
-	checkCriteriaCMD.Flags().BoolP("url", "u", false, "Print URLs")
+	checkCriteriaCMD.Flags().BoolVarP(&url, "url", "u", false, "Print URLs")
 
 }

@@ -32,7 +32,7 @@ var AWARDURLS = []string{
 
 func CreateRedirects(h *h.Handler) {
 
-	h.Redirect("","/") // Redirects from https...igem.org/Team:teamname to https...igem.org/Team:teamname/
+	h.Redirect("", "/") // Redirects from https...igem.org/Team:teamname to https...igem.org/Team:teamname/
 
 	for _, url := range AWARDURLS {
 		h.Redirect(url, strings.ToLower(url))

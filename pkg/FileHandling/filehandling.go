@@ -17,6 +17,9 @@ import (
 	Replace pageextensions: We can not easily upload JavaScript to the server and request it, because all our Files are just pages on the iGEM Wiki.
 
 */
+
+var blacklist = make(map[string]string)
+
 func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 
 	// Get all files in the root directory
@@ -26,6 +29,7 @@ func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 	}
 
 	for _, filepath := range files {
+		println("Preparing file: " + filepath)
 		file, err := os.Open(filepath) // Open file
 		if err != nil {
 			return err
@@ -42,6 +46,7 @@ func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 			continue
 		}
 		newContent = removeAllEmptyLinks(newContent)
+		newContent = removeRemoveLinks(newContent)
 		newContent = replaceDoctypeWithTemplate(newContent, teamname)
 		newContent = removeSrcSet(newContent)
 		newContent = removeInlineWP(newContent)
@@ -73,6 +78,7 @@ func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 			return err
 		}
 	}
+	println("File Upload: Done")
 	for _, filepath := range files {
 		err := pageUpload(filepath, client)
 		if err != nil {
@@ -163,6 +169,12 @@ func removeDuplicateStr(strSlice []string) []string {
 	return list
 }
 
+func removeRemoveLinks(newContent string) string{
+	removeRegEx := regexp.MustCompile(`<a class="remove" .*?<\/a>`)
+	newContent = removeRegEx.ReplaceAllString(newContent, "")
+	return newContent
+}
+
 func ReplaceAllFileLinksDebug(newContent string, fileAssociations map[string]string) string {
 	return replaceAllFileLinks(newContent, fileAssociations)
 }
@@ -220,21 +232,28 @@ func replacePageExtensions(newContent string) string {
 }
 
 func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]string, error) {
-	blacklist := make(map[string]bool)
 	result := make(map[string]string)
+	local_blacklist := make(map[string]bool)
 
 	for _, link := range fileLinks {
 		path := root + link[1:] // Remove leading slash
 		path = strings.ReplaceAll(path, "/", `\`)
 
 		res_url := ""
+		// fmt.Println(blacklist)
+		if blacklist[path] != "" && !local_blacklist[path] {
+			local_blacklist[path] = true
+			result[link] = blacklist[path]
+			continue
+		}
 
-		if !blacklist[path] {
+		if !local_blacklist[path] {
 			url, err := client.UploadFile(path, false)
 			if err != nil {
 				if err.Error() == "alreadyUploadedInThisSession" || err.Error() == "fileAlreadyUploaded" {
-					blacklist[path] = true
+					local_blacklist[path] = true
 					res_url = client.GetFileUrl(url)
+					blacklist[path] = res_url
 					result[link] = res_url
 					continue
 					// return nil, err
@@ -247,7 +266,7 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 		}
 		println("Uploaded file: " + res_url)
 		result[link] = res_url
-		blacklist[path] = true
+		blacklist[path] = res_url
 	}
 
 	return result, nil
@@ -272,13 +291,14 @@ func pageUpload(filepath string, client *h.Handler) error {
 		}
 
 		filepath = strings.ReplaceAll(filepath, "/", `\`)
-		err := client.Upload(filepath, offset, false)
+		url, err := client.Upload(filepath, offset, false)
 		if err != nil {
 			if err.Error() == "alreadyUploadedInThisSession" || err.Error() == "fileAlreadyUploaded" {
 				return nil
 			}
 			return err
 		}
+		println("Uploaded page: " + url)
 	}
 	return nil
 

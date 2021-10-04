@@ -66,16 +66,15 @@ func (h Handler) Logout() error {
 /*
 	Wrappes the Upload function in the API package, also performs a check if a session is open and provides necessary metadata
 */
-func (h Handler) Upload(filepath, offset string, force bool) error {
+func (h Handler) Upload(filepath, offset string, force bool) (string, error) {
 	if !h.loggedIn() {
-		return errors.New("notLoggedIn")
+		return "", errors.New("notLoggedIn")
 	}
 	url, err := api.Upload(h.Session, h.year, h.teamname, filepath, h.offset+offset, false, force)
-	println(url)
-	return err
+	return url, err
 }
 
-func (h Handler) Redirect(source, target string) error{
+func (h Handler) Redirect(source, target string) error {
 	_, err := api.Redirect(h.Session, h.year, h.teamname, source, target)
 	return err
 }

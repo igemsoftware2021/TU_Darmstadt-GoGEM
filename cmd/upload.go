@@ -50,7 +50,6 @@ var uploadCmd = &cobra.Command{
 		}
 		println("")
 		password = string(bytePassword)
-
 		// Establish connection with iGEM Servers
 		println("Logging in...")
 		session, err := h.NewHandler(year, username, password, teamname, offset, loginURL, logoutURL, PrefixPageURL)
