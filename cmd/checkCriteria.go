@@ -27,10 +27,12 @@ var url bool
 var checkCriteriaCMD = &cobra.Command{
 	Use:   "checkCriteria",
 	Short: "Check Medal Criteria URLs",
-	Long:  "Check if your Wiki fullfils the URL Criteria for Medals",
+	Long:  `Check if your Wiki fullfils the URL Criteria for Medals.
+			Award and MedalCriteria are defined in ...
+			Usage: gogem checkcriteria -y [year] -t [teamname] -u [boolean]`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		results, err := cc.CheckCriteria(teamname, year, url)
+		results, err := cc.CheckCriteria(config.URLORDER, config.URLS, teamname, year, url)
 		if err != nil {
 			log.Fatal(err)
 		}

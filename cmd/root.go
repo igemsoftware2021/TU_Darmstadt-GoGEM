@@ -25,19 +25,27 @@ import (
 )
 
 var cfgFile string
+var config Config
 var username string
 var year int
 var teamname string
 var wpurl string
 var password string
-var loginURL string
-var logoutURL string
-var PrefixPageURL string
 var offset string
 var force bool
 var clean bool
 var insecure bool
 var redirect bool
+
+type Config struct {
+	URLS map[string]string `mapstructure:"urls"`
+	URLORDER []string `mapstructure:"order"`
+	FONTS map[string]string `mapstructure:"fonts"`
+	LOGINURL string `mapstructure:"loginurl"`
+	LOGOUTURL string `mapstructure:"logouturl"`
+	PREFIXPAGEURL string `mapstructure:"prefixurl"`
+}
+	
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -61,7 +69,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.goGEM.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./goGEM.json)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -76,18 +84,33 @@ func initConfig() {
 	} else {
 		// Find home directory.
 		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
 		// Search config in home directory with name ".goGEM" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".goGEM")
+		viper.SetConfigName("goGEM")
+		viper.SetConfigType("json")
+
+		viper.AddConfigPath(".")  // adding current directory as second search path
+		viper.SetConfigName("goGEM")
+		viper.SetConfigType("json")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-
+	
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	} else {
+		fmt.Println("No config file found, please create gogem.json in the current working directory, or the current user home directory.")
+		os.Exit(1)
+	}
+
+	err := viper.Unmarshal(&config)
+	if err != nil {
+		fmt.Println(err)
 	}
 }

@@ -9,17 +9,16 @@ import (
 	h "github.com/Jackd4w/goGEM/pkg/Handler"
 )
 
+var blacklist = make(map[string]string) // Creates a file wide blacklist for allready uploaded files, trying to reduce the request count to the iGEM Servers.
+
 /*
 	Prepares pages for upload, and begins uploading the media files... (This dual purpose really gives me a headache, but iGEM randomizes the absolut url to the media files, and there is no other way than uploading to safely replace all links)
 	Cuts out all empty link references (these get created when converting a wp site to a static one and are remnants of the WP APIs)
 	Replaces the HTML DOCTYPE declaration with the standard iGEM template for the team (i.e. {{teamname}})
 	Removes all srcsets, these are good for optimization but dramatically increase the difficulty of uploading images to igem
-	Replace pageextensions: We can not easily upload JavaScript to the server and request it, because all our Files are just pages on the iGEM Wiki.
+	Replace pageextensions: We can not easily upload JavaScript to the server and request it, because all our Files are just pages on the iGEM Wiki and the MIME-Type has to match.
 
 */
-
-var blacklist = make(map[string]string)
-
 func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 
 	// Get all files in the root directory
@@ -53,19 +52,10 @@ func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 		newContent = replacePageExtensions(newContent)
 
 		fileLinks := findAllFileLinks(newContent)
-		fileAssociations, err := fileUpload(fileLinks, root, client) // Output from FileUpload method takes fileLinks as input
+		fileAssociations, err := fileUpload(fileLinks, root, client) // Output from FileUpload method takes fileLinks as input, and uploads all files to the iGEM Wiki
 		if err != nil {
 			return err
 		}
-
-		// DEBUG - Prints all file associations
-		// println(" ")
-		// println("--------------------------------------------------------------")
-		// println(filepath)
-		// println("--------------------------------------------------------------")
-		// for key, value := range fileAssociations {
-		// 	println(key + ": " + value)
-		// }
 
 		newContent = replaceAllFileLinks(newContent, fileAssociations)
 
@@ -110,6 +100,9 @@ func allFilesInDir(path string) ([]string, error) {
 	return files, nil // Return the list of files
 }
 
+/*
+* Function finds all links to media files and returns them sanitized as a string slice 
+*/
 func findAllFileLinks(newContent string) []string {
 	var fileLinks []string
 	srcRegEx := regexp.MustCompile(`src=("|')(.*?)("|')`) // Regex to find all src attributes
@@ -127,7 +120,7 @@ func findAllFileLinks(newContent string) []string {
 	for _, link := range urlLinks {
 		link = urlRegEx.ReplaceAllString(link, `${1}`) // Replace url attribute with just the path
 		if strings.Contains(link, "assets") {          // If link is not a css, js, json or html file, append it to fileLinks)
-			fileLinks = append(fileLinks, link) // Append all links to fileLinks
+			fileLinks = append(fileLinks, link)
 		}
 	}
 
@@ -135,12 +128,19 @@ func findAllFileLinks(newContent string) []string {
 	return fileLinks // Return new array
 }
 
+/*
+* Removing all legacy links, which originate mostly from WP Legacy APIs 
+*/
 func removeAllEmptyLinks(newContent string) string {
 	emptyHrefRegEx := regexp.MustCompile(`<.*?href="".*?\>`)
 	newContent = emptyHrefRegEx.ReplaceAllString(newContent, "")
 	return newContent
 }
 
+/*
+* Removes srcsets, this is a feature that should not have to be removed because it dramatically reduces the stress put onto the servers at page load.
+* But because the uploaded media files get a randomized URL there is no sane way to support the different srcset links.
+*/
 func removeSrcSet(newContent string) string {
 	srcSetRegEx := regexp.MustCompile(`srcset=".*?"`)
 	sizesRegEx := regexp.MustCompile(`sizes=".*?"`)
@@ -151,12 +151,19 @@ func removeSrcSet(newContent string) string {
 	return newContent
 }
 
+/*
+* Removing legacy WordPress inline scripts and styles
+* TODO - Potentially breaking if there is no inline stylesheet in the header
+*/
 func removeInlineWP(newContent string) string {
 	styleRegEx := regexp.MustCompile(`(?s)<script>.*?</style>`)
 	newContent = styleRegEx.ReplaceAllString(newContent, "")
 	return newContent
 }
 
+/*
+* Removing Duplicates from a slice through usage of a map
+*/
 func removeDuplicateStr(strSlice []string) []string {
 	allKeys := make(map[string]bool)
 	list := []string{}
@@ -169,14 +176,13 @@ func removeDuplicateStr(strSlice []string) []string {
 	return list
 }
 
+/*
+* Links found that lead to old WP-Content that is not reachable on the new wiki
+*/
 func removeRemoveLinks(newContent string) string{
 	removeRegEx := regexp.MustCompile(`<a class="remove" .*?<\/a>`)
 	newContent = removeRegEx.ReplaceAllString(newContent, "")
 	return newContent
-}
-
-func ReplaceAllFileLinksDebug(newContent string, fileAssociations map[string]string) string {
-	return replaceAllFileLinks(newContent, fileAssociations)
 }
 
 /*
@@ -211,7 +217,7 @@ func replacePageExtensions(newContent string) string {
 	cssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.css)("|')`)         // Regex to find all relative referenced css files
 	mincssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.min\.css)("|')`) // Regex to find all relative referenced css files
 	jsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.js)(\?.*?)?("|')`)    // Regex to find all relative referenced js files
-	minjsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.min\.js)(\?.*?)?("|')`)
+	minjsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.min\.js)(\?.*?)?("|')`) // Regex to find all relative referenced minjs files
 	indexRegEx := regexp.MustCompile(`index\.html`) // Regex to find all href and src attributes that reference index.html
 	htmlRegEx := regexp.MustCompile(`\.html`)
 
@@ -231,6 +237,11 @@ func replacePageExtensions(newContent string) string {
 	return newContent
 }
 
+/*
+* Uploads all files specified in the fileLinks map to the iGEM Wiki.
+* Uses the iGEM Wiki API to upload the files through the defined handler.
+* Returns a map of the uploaded files with the original file path as key and the new url as value.
+*/
 func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]string, error) {
 	result := make(map[string]string)
 	local_blacklist := make(map[string]bool)
@@ -272,6 +283,10 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 	return result, nil
 }
 
+/*
+* Upload all "non files" to the iGEM Wiki.
+* Uses the iGEM Wiki API to upload the files through the defined handler.
+*/
 func pageUpload(filepath string, client *h.Handler) error {
 	offset := ""
 	filename := filepath[strings.LastIndex(filepath, "/")+1:]
@@ -304,6 +319,9 @@ func pageUpload(filepath string, client *h.Handler) error {
 
 }
 
+/*
+* Checks if the "OS.file" is a page.
+*/
 func isPage(filepath string) bool {
 	if strings.Contains(filepath, ".html") || strings.Contains(filepath, ".htm") || strings.Contains(filepath, ".css") || strings.Contains(filepath, ".js") {
 		return true

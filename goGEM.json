@@ -1,0 +1,68 @@
+{
+  "URLs": [
+    {
+      "Medals": "#",
+      "Bronze #2 (Attributions)": "Attributions",
+      "Bronze #3 (Project Description)": "Description",
+      "Bronze #4 (Contribution)": "Contribution",
+      "Silver #1 (Engineering Success)": "Engineering",
+      "Silver #2 (Collaboration)": "Collaborations",
+      "Silver #3 (Human Practices)": "Human_Practices",
+      "Silver #4 (Proposed Implementation)": "Implementation",
+      "Gold #1 (Integrated Human Practices)": "Human_Practices",
+      "Gold #3 (Project Modeling)": "Model",
+      "Gold #4 (Proof of Concept)": "Proof_Of_Concept",
+      "Gold #5 (Partnership)": "Partnership",
+      "Gold #6 (Education & Communication)": "Communication",
+      "Awards": "#",
+      "Best Education": "Education",
+      "Best Hardware": "Hardware",
+      "Inclusivity Award": "Inclusivity",
+      "Best HP": "Human_Practices",
+      "Best Measurement": "Measurement",
+      "Best Model": "Model",
+      "Best Plant SynBio": "Plant",
+      "Best Software Tool": "Software",
+      "Best Supporting Entrepreneurship": "Entrepreneurship",
+      "Best Sustainable Development Impact": "Sustainable",
+      "Safety and Security Award": "Safety"
+    }
+  ],
+  "Order": [
+    "Medals",
+    "Bronze #2 (Attributions)",
+    "Bronze #3 (Project Description)",
+    "Bronze #4 (Contribution)",
+    "Silver #1 (Engineering Success)",
+    "Silver #2 (Collaboration)",
+    "Silver #3 (Human Practices)",
+    "Silver #4 (Proposed Implementation)",
+    "Gold #1 (Integrated Human Practices)",
+    "Gold #3 (Project Modeling)",
+    "Gold #4 (Proof of Concept)",
+    "Gold #5 (Partnership)",
+    "Gold #6 (Education & Communication)",
+    "Awards",
+    "Best Education",
+    "Best Hardware",
+    "Inclusivity Award",
+    "Best HP",
+    "Best Measurement",
+    "Best Model",
+    "Best Plant SynBio",
+    "Best Software Tool",
+    "Best Supporting Entrepreneurship",
+    "Best Sustainable Development Impact",
+    "Safety and Security Award"
+  ],
+  "Fonts": [
+    {
+      "Philosopher": "url(https://2021.igem.org/wiki/images/e/ef/T--TU_Darmstadt--Philosopher.woff)",
+      "Montserrat": "url(https://2021.igem.org/wiki/images/4/42/T--TU_Darmstadt--Montserrat.woff)",
+      "Raleway": "url(https://2021.igem.org/wiki/images/5/53/T--TU_Darmstadt--Raleway.woff)"
+    }
+  ],
+  "LoginURL": "https://igem.org/Login2",
+  "LogoutURL": "https://igem.org/Logout",
+  "PrefixURL": "https://%d.igem.org/wiki/index.php?title=Special:PrefixIndex"
+}

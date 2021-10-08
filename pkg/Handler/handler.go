@@ -18,6 +18,8 @@ type Handler struct {
 	prefixURL       string
 }
 
+//TODO move blacklist here, this is the place where all files pass, also this persists for the whole runtime
+
 /*
   My Approach at a Session handler, trying to avoide to make obfuscated API calls, and trying to minimize requests to iGEM Servers by holding onto the Session for the runtime of the program.
   Also reduces the information that needs to be passed around.
@@ -121,7 +123,7 @@ func (h Handler) GetAllPages() ([]string, error) {
 	return api.QueryPages(h.prefixURL, h.teamname, h.offset, h.Session)
 }
 
-/*
+/* //TODO correct: there is a tag that gets added, so the checker can recognize deleted pages (?) Look into API
 Overwrite the specified pageurl with an empty string, effectively deleting the page (also marking it for eventuell cleanup processes from the hoster side due to it having no user content)
 */
 func (h Handler) DeletePage(pageurl string) error {

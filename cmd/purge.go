@@ -47,7 +47,7 @@ var purgeCmd = &cobra.Command{
 
 		// Establish connection with iGEM Servers
 		println("Logging in...")
-		session, err := h.NewHandler(year, username, password, teamname, offset, loginURL, logoutURL, PrefixPageURL)
+		session, err := h.NewHandler(year, username, password, teamname, offset, config.LOGINURL, config.LOGOUTURL, config.PREFIXPAGEURL)
 		if err != nil {
 			if err.Error() == "loginFailed" {
 				println("Login failed, please try again")
@@ -109,9 +109,6 @@ func init() {
 
 	purgeCmd.Flags().StringVarP(&password, "password", "p", "", "Password")
 	purgeCmd.Flags().StringVarP(&offset, "offset", "o", "", "Offset from your Teams Namespace root")
-	purgeCmd.Flags().StringVarP(&loginURL, "login", "L", "https://igem.org/Login2", "LoginURL, set by default")
-	purgeCmd.Flags().StringVarP(&logoutURL, "logout", "l", "https://igem.org/Logout", "LogoutURL, set by default")
-	purgeCmd.Flags().StringVarP(&PrefixPageURL, "prefix", "P", fmt.Sprintf("https://%d.igem.org/wiki/index.php?title=Special:PrefixIndex", year), "Special Page 'All Pages with prefix', set by default")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

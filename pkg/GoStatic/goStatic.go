@@ -14,15 +14,6 @@ import (
 	"github.com/gocolly/colly"
 )
 
-//TODO Do not use local fonts, upload your fonts to igem and reference them in the CSS
-//TODO Add the names of the fonts you are using to the follownig list, as well as the url to the font file on the iGEM Servers
-
-var fonts = map[string]string{
-	"Philosopher": "url(https://2021.igem.org/wiki/images/e/ef/T--TU_Darmstadt--Philosopher.woff)",
-	"Montserrat": "url(https://2021.igem.org/wiki/images/4/42/T--TU_Darmstadt--Montserrat.woff)",
-	"Raleway": "url(https://2021.igem.org/wiki/images/5/53/T--TU_Darmstadt--Raleway.woff)",
-}
-
 /*
 
 	Download all files from the given url and save them to the given path.
@@ -31,7 +22,7 @@ var fonts = map[string]string{
 	This can lead to problems if files are only included via a css file (aka fonts) or via js files
 
 */
-func GoStatic(url, path string, insecure bool) (string, error) {
+func GoStatic(url, path string, fonts map[string]string, insecure bool) (string, error) {
 	url = sanitize_url(url)
 
 	if insecure {
@@ -53,7 +44,7 @@ func GoStatic(url, path string, insecure bool) (string, error) {
 		return "", err
 	}
 
-	err = fetchPages(pages, remove, project_path)
+	err = fetchPages(pages, remove, fonts, project_path)
 	if err != nil {
 		return "", err
 	}
@@ -83,7 +74,6 @@ func createProject(path, url string) (string, error) {
 	pathCSS := path + "/css"
 	pathJS := path + "/js"
 	pathAssets := path + "/assets"
-	pathFonts := path + "/fonts"
 
 	if err = makeDir(pathCSS); err != nil {
 		return "", err
@@ -92,9 +82,6 @@ func createProject(path, url string) (string, error) {
 		return "", err
 	}
 	if err = makeDir(pathAssets); err != nil {
-		return "", err
-	}
-	if err = makeDir(pathFonts); err != nil {
 		return "", err
 	}
 	return path, nil
@@ -237,7 +224,7 @@ func createFileLinks(pages map[string]string, url string) error {
 	Reomve all URLs from the files specified in the remove list
 	Replace all absolut links given in the pages list with relative links, which are the second parameter in the pages list
 */
-func fetchPages(pages, remove map[string]string, path string) error {
+func fetchPages(pages, remove, fonts map[string]string, path string) error {
 
 	for link, rel_link := range pages {
 		resp, err := http.Get(link)

@@ -15,9 +15,9 @@ Tries to evaluate if all mandatory Links are reachable.
 Links are defined relative to the Team main page.
 
 */
-func createAwardMap() *orderedmap.OrderedMap {
+func createAwardMap(order []string, urls map[string]string) *orderedmap.OrderedMap {
 	m := orderedmap.NewOrderedMap()
-
+ /*
 	m.Set("Medals", "#")
 	m.Set("Bronze #2 (Attributions)", "Attributions")
 	m.Set("Bronze #3 (Project Description)", "Description")
@@ -43,16 +43,22 @@ func createAwardMap() *orderedmap.OrderedMap {
 	m.Set("Best Supporting Entrepreneurship", "Entrepreneurship")
 	m.Set("Best Sustainable Development Impact", "Sustainable")
 	m.Set("Safety and Security Award", "Safety")
-
+*/
+	for _, key := range order {
+		m.Set(key, urls[key])
+	}
 	return m
 }
-
-func CheckCriteria(team string, year int, url bool) (string, error) {
+/*
+* Checks if a page is reachable via the URLs defined in ... and returns if it is reachable and if the "DO NOT JUDGE" hint has been removed.
+* Returns a formated string with the result.
+*/
+func CheckCriteria(order []string, urls map[string]string, team string, year int, url bool) (string, error) {
 	result := ""
 	var err error
 	baseURL := "https://" + fmt.Sprint(year) + ".igem.org/Team:" + team + "/"
 
-	awardMap := createAwardMap()
+	awardMap := createAwardMap(order, urls)
 
 	for el := awardMap.Front(); el != nil; el = el.Next() {
 		medal := el.Key.(string)

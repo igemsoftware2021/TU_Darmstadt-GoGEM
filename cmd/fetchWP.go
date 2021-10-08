@@ -29,28 +29,21 @@ var fetchWPCmd = &cobra.Command{
 	Use:   "fetchWP",
 	Short: "Clone a WordPress Site to your PC, maintaining all static functionality",
 	Long: `Clone a WordPress Site to your PC, maintaining all static functionality.
-		Use: goGEM fetchWP [URL]`,
+		It is important that you specify the used protocol (http or https) in the URL.
+		Useage: goGEM fetchWP [URL]`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+
 		fmt.Println("Cloning WordPress Site")
 		fmt.Println("URL:", args[0])
 
-		gogemgostatic.GoStatic(args[0], project_dir, insecure)
+		gogemgostatic.GoStatic(args[0], project_dir, config.FONTS, insecure)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(fetchWPCmd)
 
-	fetchWPCmd.Flags().StringVarP(&project_dir, "dir", "d", "", "Project Directory")
+	fetchWPCmd.Flags().StringVarP(&project_dir, "dir", "d", "", "Project Directory; Standard: current working directory")
 	fetchWPCmd.Flags().BoolVarP(&insecure, "insecure", "i", false, "Ignores HTTPS Certificate warnings")
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// fetchWPCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// fetchWPCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
