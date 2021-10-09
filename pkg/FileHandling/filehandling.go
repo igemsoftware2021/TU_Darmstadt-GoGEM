@@ -45,6 +45,7 @@ func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 			continue
 		}
 		newContent = removeAllEmptyLinks(newContent)
+		newContent = removeObjects(newContent)
 		newContent = removeRemoveLinks(newContent)
 		newContent = replaceDoctypeWithTemplate(newContent, teamname)
 		newContent = removeSrcSet(newContent)
@@ -124,6 +125,15 @@ func findAllFileLinks(newContent string) []string {
 		}
 	}
 
+	hrefRegEx := regexp.MustCompile(`href=("|')(.*?)("|')`) // Regex to find all href attributes
+	hrefLinks := hrefRegEx.FindAllString(newContent, -1)    // Find all href attributes
+	for _, link := range hrefLinks {
+		link = hrefRegEx.ReplaceAllString(link, `${2}`) // Replace href attribute with just the path
+		if strings.Contains(link, "assets") {          // If link is not a css, js, json or html file, append it to fileLinks)
+			fileLinks = append(fileLinks, link)
+		}
+	}
+
 	fileLinks = removeDuplicateStr(fileLinks)
 	return fileLinks // Return new array
 }
@@ -134,6 +144,15 @@ func findAllFileLinks(newContent string) []string {
 func removeAllEmptyLinks(newContent string) string {
 	emptyHrefRegEx := regexp.MustCompile(`<.*?href="".*?\>`)
 	newContent = emptyHrefRegEx.ReplaceAllString(newContent, "")
+	return newContent
+}
+
+/*
+* Removing all objects from the page, objects seem not to be supported (well) by iGEM
+*/
+func removeObjects(newContent string) string {
+	objectRegEx := regexp.MustCompile(`<object.*?</object>`)
+	newContent = objectRegEx.ReplaceAllString(newContent, "")
 	return newContent
 }
 

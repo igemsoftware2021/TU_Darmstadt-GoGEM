@@ -15,6 +15,7 @@ Tries to evaluate if all mandatory Links are reachable.
 Links are defined relative to the Team main page.
 
 */
+//TODO: move to API
 func createAwardMap(order []string, urls map[string]string) *orderedmap.OrderedMap {
 	m := orderedmap.NewOrderedMap()
  /*
