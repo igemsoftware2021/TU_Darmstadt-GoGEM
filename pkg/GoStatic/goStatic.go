@@ -191,9 +191,16 @@ func createFileLinks(pages map[string]string, url string) error {
 			}
 			pages[link] = "./" + filename
 		} else if strings.Contains(filetype, "text/css") {
-			fragments := strings.Split(link, "/")
-			fragments = delete_empty(fragments)
-			filename := fragments[len(fragments)-1]
+			filename := ""
+			if strings.Contains(link, "plugins"){
+				fragments := strings.Split(link, "/")
+				fragments = delete_empty(fragments)
+				filename = fragments[len(fragments)-2] + "-" + fragments[len(fragments)-1]
+			} else {
+				fragments := strings.Split(link, "/")
+				fragments = delete_empty(fragments)
+				filename = fragments[len(fragments)-1]
+			}
 			filename = strings.Split(filename, "?")[0]
 			if strings.Contains(filename, "min") {
 				filename = strings.Split(filename, ".")[0] + ".min.css"
@@ -202,10 +209,19 @@ func createFileLinks(pages map[string]string, url string) error {
 			}
 			pages[link] = "./css/" + filename
 		} else if strings.Contains(filetype, "javascript") {
-			fragments := strings.Split(link, "/")
-			fragments = delete_empty(fragments)
-			filename := fragments[len(fragments)-1]
-			filename = strings.Split(filename, "?")[0]
+			filename := ""
+			if strings.Contains(link, "plugins"){
+				fragments := strings.Split(link, "/")
+				fragments = delete_empty(fragments)
+				filename = fragments[len(fragments)-2] + "-" + fragments[len(fragments)-1]
+			} else {
+				fragments := strings.Split(link, "/")
+				fragments = delete_empty(fragments)
+				filename = fragments[len(fragments)-1]
+			}
+				filename = strings.Split(filename, "?")[0]
+				filename = strings.Replace(filename, ".", "-", strings.Count(filename, ".") - 1)
+			println(filename)
 			pages[link] = "./js/" + filename
 		} else {
 			fragments := strings.Split(link, "/")
@@ -214,7 +230,6 @@ func createFileLinks(pages map[string]string, url string) error {
 			pages[link] = "./assets/" + filename
 		}
 	}
-
 	return nil
 
 }

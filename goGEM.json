@@ -28,6 +28,11 @@
       "Safety and Security Award": "Safety"
     }
   ],
+  "CustomRedirects": [
+    {
+      "education": "communication"
+    }
+  ],
   "Order": [
     "Medals",
     "Bronze #2 (Attributions)",

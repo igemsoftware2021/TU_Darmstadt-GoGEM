@@ -36,11 +36,13 @@ var force bool
 var clean bool
 var insecure bool
 var redirect bool
+var delete bool
 
 type Config struct {
 	URLS map[string]string `mapstructure:"urls"`
 	URLORDER []string `mapstructure:"order"`
 	FONTS map[string]string `mapstructure:"fonts"`
+	CUSTOMREDIRECTS map[string]string `mapstructure:"customredirects"`
 	LOGINURL string `mapstructure:"loginurl"`
 	LOGOUTURL string `mapstructure:"logouturl"`
 	PREFIXPAGEURL string `mapstructure:"prefixurl"`

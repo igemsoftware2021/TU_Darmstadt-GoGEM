@@ -2,6 +2,7 @@ package gogemhandler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	api "github.com/Jackd4w/goGEM-WikiAPI"
@@ -31,7 +32,7 @@ func NewHandler(year int, username, password, teamname, offset, loginURL, logout
 
 	handler.loginURL = loginURL
 	handler.logoutURL = logoutURL
-	handler.prefixURL = prefixURL
+	handler.prefixURL = fmt.Sprintf(prefixURL, year)
 	handler.year = year
 	handler.teamname = teamname
 	handler.offset = offset

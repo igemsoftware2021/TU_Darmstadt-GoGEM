@@ -68,7 +68,11 @@ var uploadCmd = &cobra.Command{
 
 		if redirect {
 			println("Creating redirects...")
-			r.CreateRedirects(config.URLS, session)
+			r.CreateUppercaseRedirects(config.URLS, session)
+			for source, target := range config.CUSTOMREDIRECTS {
+				fmt.Printf("Creating redirect from %s to %s \n", source, target)
+				r.CreateRedirect(source, target, session)
+			}
 		}
 		// Clone WordPress Page
 		println("Cloning WordPress Page...")
@@ -77,7 +81,11 @@ var uploadCmd = &cobra.Command{
 			println(err.Error())
 			return
 		}
-		defer cleanUp(project_path)
+		if delete {
+			defer cleanUp(project_path)
+		} else {
+			println("Temporary files are not deleted")
+		}
 		println("Cloning successfull, begining upload...")
 		// Prepare Files and Upload them
 
@@ -108,6 +116,7 @@ func init() {
 	uploadCmd.Flags().BoolVarP(&clean, "clean", "c", true, "Clean")
 	uploadCmd.Flags().BoolVarP(&insecure, "insecure", "i", false, "Ignores HTTPS Certificate warnings")
 	uploadCmd.Flags().BoolVarP(&redirect, "redirect", "r", false, "Creates redirects from upper to lowercase")
+	uploadCmd.Flags().BoolVarP(&delete, "delete", "d", true, "Delete the temporary files after upload")
 }
 
 func cleanUp(project_dir string) {
