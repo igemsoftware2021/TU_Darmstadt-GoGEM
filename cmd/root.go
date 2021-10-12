@@ -46,6 +46,7 @@ type Config struct {
 	LOGINURL string `mapstructure:"loginurl"`
 	LOGOUTURL string `mapstructure:"logouturl"`
 	PREFIXPAGEURL string `mapstructure:"prefixurl"`
+	MATHJAXURL string `mapstructure:"mathjaxurl"`
 }
 	
 

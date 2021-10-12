@@ -89,7 +89,7 @@ var uploadCmd = &cobra.Command{
 		println("Cloning successfull, begining upload...")
 		// Prepare Files and Upload them
 
-		if err := fh.PrepFilesForIGEM(teamname, project_path, session); err != nil {
+		if err := fh.PrepFilesForIGEM(teamname, project_path, config.MATHJAXURL, session); err != nil {
 			println(err.Error())
 			return
 		}

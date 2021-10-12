@@ -33,7 +33,7 @@ var AWARDURLS = []string{
 */
 /*
 * Creates redirects from the uppercase addresses defined by iGEM to the "normal" lowercase URLs
- */
+ */ //TODO: Move to API
 func CreateUppercaseRedirects(urls map[string]string, h *h.Handler) {
 
 	h.Redirect("", "/") // Redirects from https...igem.org/Team:teamname to https...igem.org/Team:teamname/

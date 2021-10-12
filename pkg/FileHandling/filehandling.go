@@ -19,7 +19,7 @@ var blacklist = make(map[string]string) // Creates a file wide blacklist for all
 	Replace pageextensions: We can not easily upload JavaScript to the server and request it, because all our Files are just pages on the iGEM Wiki and the MIME-Type has to match.
 
 */
-func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
+func PrepFilesForIGEM(teamname, root, mathjax_url string, client *h.Handler) error {
 
 	// Get all files in the root directory
 	files, err := allFilesInDir(root)
@@ -50,7 +50,7 @@ func PrepFilesForIGEM(teamname, root string, client *h.Handler) error {
 		newContent = replaceDoctypeWithTemplate(newContent, teamname)
 		newContent = removeSrcSet(newContent)
 		newContent = removeInlineWP(newContent)
-		newContent = replacePageExtensions(newContent)
+		newContent = replacePageExtensions(newContent, mathjax_url)
 
 		fileLinks := findAllFileLinks(newContent)
 		fileAssociations, err := fileUpload(fileLinks, root, client) // Output from FileUpload method takes fileLinks as input, and uploads all files to the iGEM Wiki
@@ -232,19 +232,21 @@ Therefor we have to request the raw HTML of the page from the server, as this is
 But even if we do that, iGEM tries to prevent the unintended load of JS by checking the raw conent and recognizing if it is a script, preventing display if the content type does not match.
 
 */
-func replacePageExtensions(newContent string) string {
+func replacePageExtensions(newContent, mathjax_url string) string {
 	cssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.css)("|')`)         // Regex to find all relative referenced css files
 	mincssRegex := regexp.MustCompile(`((href|src)=("|').*?)(\.min\.css)("|')`) // Regex to find all relative referenced css files
 	jsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.js)(\?.*?)?("|')`)    // Regex to find all relative referenced js files
 	minjsRegex := regexp.MustCompile(`((src|href)=("|').*)(\.min\.js)(\?.*?)?("|')`) // Regex to find all relative referenced minjs files
 	indexRegEx := regexp.MustCompile(`index\.html`) // Regex to find all href and src attributes that reference index.html
 	htmlRegEx := regexp.MustCompile(`\.html`)
+	mathJaxRegEx := regexp.MustCompile(`<!--ADD_MATHJAX-->`)
 
 	cssReplace := `${1}?action=raw&ctype=text/css${3}`        // Replace all relative css paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
 	mincssReplace := `${1}-min?action=raw&ctype=text/css${3}` // Replace all relative css paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
 	jsReplace := `${1}?action=raw&ctype=text/javascript${3}`
 	minjsReplace := `${1}-min?action=raw&ctype=text/javascript${3}`
 	htmlReplace := ``
+	mathJaxReplace := `<script src="` + mathjax_url + `"></script>`
 
 	newContent = mincssRegex.ReplaceAllString(newContent, mincssReplace) // Replace all '.css' in relative paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
 	newContent = cssRegex.ReplaceAllString(newContent, cssReplace)       // Replace all '.css' in relative paths with ?action=raw&ctype=text/css, requesting the raw file from the server with the right content type
@@ -252,6 +254,7 @@ func replacePageExtensions(newContent string) string {
 	newContent = jsRegex.ReplaceAllString(newContent, jsReplace)         // Replace all '.js' in relative paths with ?action=raw&ctype=text/javascript, requesting the raw file from the server with the right content type
 	newContent = indexRegEx.ReplaceAllString(newContent, htmlReplace)    // Replace all href and src attributes that reference index.html with empty string
 	newContent = htmlRegEx.ReplaceAllString(newContent, htmlReplace)     // Replace all '.html' in relative paths with empty string, so the raw file is requested from the server without the .html extension
+	newContent = mathJaxRegEx.ReplaceAllString(newContent, mathJaxReplace) // Replace the mathjax placeholder with the mathjax url form the config
 
 	return newContent
 }

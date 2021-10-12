@@ -69,5 +69,6 @@
   ],
   "LoginURL": "https://igem.org/Login2",
   "LogoutURL": "https://igem.org/Logout",
-  "PrefixURL": "https://%d.igem.org/wiki/index.php?title=Special:PrefixIndex"
+  "PrefixURL": "https://%d.igem.org/wiki/index.php?title=Special:PrefixIndex",
+  "MathJaxURL": "https://2021.igem.org/common/MathJax-2.5-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 }
