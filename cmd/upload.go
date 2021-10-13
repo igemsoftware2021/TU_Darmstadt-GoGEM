@@ -18,16 +18,19 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 	"syscall"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
-	fh "github.com/Jackd4w/goGEM/pkg/FileHandling"
-	wp "github.com/Jackd4w/goGEM/pkg/GoStatic"
-	h "github.com/Jackd4w/goGEM/pkg/Handler"
-	r "github.com/Jackd4w/goGEM/pkg/Redirect"
+	fh "github.com/Jackd4w/GoGEM/pkg/FileHandling"
+	wp "github.com/Jackd4w/GoGEM/pkg/GoStatic"
+	h "github.com/Jackd4w/GoGEM/pkg/Handler"
+	r "github.com/Jackd4w/GoGEM/pkg/Redirect"
 )
+
+var errors []string
 
 // uploadCmd represents the upload command
 var uploadCmd = &cobra.Command{
@@ -36,9 +39,9 @@ var uploadCmd = &cobra.Command{
 	Long: `Curls every URL that is reachable from the specified entry URL.
 	Replaces every relative Link on the WP-Page with static links pointing to the iGEM Servers.
 	If you want to clone your Wiki to https://2021.igem.org/Team:TU_Darmstadt/test/[...] then the command would be:
-	gogem upload -u "[Your Username]" -y 2021 -t "TU_Darmstadt" -w "[Your WP Wiki]" -o "test".
+	GoGEM upload -u "[Your Username]" -y 2021 -t "TU_Darmstadt" -w "[Your WP Wiki]" -o "test".
 	It is important that you add the used protocol for your WP-Page (i.e. http or https).
-	Usage: gogem upload -u "[Username]" -y [year] -t "[Teamname]" -w "[WP URL]" -o "[offset]"`,
+	Usage: GoGEM upload -u "[Username]" -y [year] -t "[Teamname]" -w "[WP URL]" -o "[offset]"`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get necessary data
@@ -79,7 +82,7 @@ var uploadCmd = &cobra.Command{
 		project_path, err := wp.GoStatic(wpurl, "", config.FONTS, insecure)
 		if err != nil {
 			println(err.Error())
-			return
+			errors = append(errors, err.Error())
 		}
 		if delete {
 			defer cleanUp(project_path)
@@ -89,12 +92,22 @@ var uploadCmd = &cobra.Command{
 		println("Cloning successfull, begining upload...")
 		// Prepare Files and Upload them
 
-		if err := fh.PrepFilesForIGEM(teamname, project_path, config.MATHJAXURL, session); err != nil {
-			println(err.Error())
-			return
+		if err := fh.PrepFilesForIGEM(teamname, project_path, config.MATHJAXURL, session); err != "" {
+			errorlist := strings.Split(err, "\n")
+			errors = append(errors, errorlist...)
 		}
-		println("Upload successfull")
+		if len(errors) > 0 {
+			println("---------------------------------------------------------")
+			println("Error summary:")
+			for _, err := range errors {
+				println(err)
+			}
+		} else {
+			println("Upload successfull")
+		}
 		println("Logging out")
+
+
 
 	},
 }

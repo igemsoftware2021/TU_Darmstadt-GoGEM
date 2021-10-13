@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	api "github.com/Jackd4w/goGEM-WikiAPI"
+	api "github.com/Jackd4w/GoGEM-WikiAPI"
 )
 
 type Handler struct {

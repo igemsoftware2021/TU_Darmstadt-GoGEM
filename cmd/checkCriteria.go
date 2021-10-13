@@ -18,7 +18,7 @@ package cmd
 import (
 	"log"
 
-	cc "github.com/Jackd4w/goGEM/pkg/checkCriteria"
+	cc "github.com/Jackd4w/GoGEM/pkg/checkCriteria"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var checkCriteriaCMD = &cobra.Command{
 	Short: "Check Medal Criteria URLs",
 	Long:  `Check if your Wiki fullfils the URL Criteria for Medals.
 			Award and MedalCriteria are defined in ...
-			Usage: gogem checkcriteria -y [year] -t [teamname] -u [boolean]`,
+			Usage: GoGEM checkcriteria -y [year] -t [teamname] -u [boolean]`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		results, err := cc.CheckCriteria(config.URLORDER, config.URLS, teamname, year, url)

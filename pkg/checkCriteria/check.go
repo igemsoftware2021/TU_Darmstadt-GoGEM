@@ -1,4 +1,4 @@
-package gogemcheckcriteria
+package GoGEMcheckcriteria
 
 import (
 	"fmt"

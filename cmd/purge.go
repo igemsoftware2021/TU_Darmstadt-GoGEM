@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"syscall"
 
-	h "github.com/Jackd4w/goGEM/pkg/Handler"
+	h "github.com/Jackd4w/GoGEM/pkg/Handler"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
@@ -33,7 +33,7 @@ var purgeCmd = &cobra.Command{
 	Long: `CAUTION!! DESTRUCTIVE ACTION! Purge your Wiki from the iGEM Servers.
 	Files can not be deleted, but pages can be overwritten with no content. Usefull for cleaning up before setting up your actual Wiki.
 	THIS IS A DESTRUCTIVE ACTION, you will be required to re enter your password.
-	Usage: gogem purge -u "[Username]" -y [Wiki Year] -t "[Teamname]" -o "[Offset]"`,
+	Usage: GoGEM purge -u "[Username]" -y [Wiki Year] -t "[Teamname]" -o "[Offset]"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		println("This is a DESTRUCTIVE ACTION, you will be required to re enter your password after you logged in. If you want to abort please hit 'Ctrl + C' on your keyboard or close the shell")
 		fmt.Print("Enter Password: ")

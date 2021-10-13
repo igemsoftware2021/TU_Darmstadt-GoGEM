@@ -1,4 +1,4 @@
-package gogemgostatic
+package GoGEMgostatic
 
 import (
 	"crypto/tls"
@@ -288,9 +288,11 @@ func fetchPages(pages, remove, fonts map[string]string, path string) error {
 
 		file_path := path + strings.Replace(rel_link, "./", "/", -1)
 
-		err = ioutil.WriteFile(file_path, []byte(resp_body), 0644)
-		if err != nil {
-			return err
+		if len(resp_body) > 0 {
+			err = ioutil.WriteFile(file_path, []byte(resp_body), 0644)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

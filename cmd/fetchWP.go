@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 
-	gogemgostatic "github.com/Jackd4w/goGEM/pkg/GoStatic"
+	GoGEMgostatic "github.com/Jackd4w/GoGEM/pkg/GoStatic"
 	"github.com/spf13/cobra"
 )
 
@@ -30,14 +30,14 @@ var fetchWPCmd = &cobra.Command{
 	Short: "Clone a WordPress Site to your PC, maintaining all static functionality",
 	Long: `Clone a WordPress Site to your PC, maintaining all static functionality.
 		It is important that you specify the used protocol (http or https) in the URL.
-		Useage: goGEM fetchWP [URL]`,
+		Useage: GoGEM fetchWP [URL]`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
 		fmt.Println("Cloning WordPress Site")
 		fmt.Println("URL:", args[0])
 
-		gogemgostatic.GoStatic(args[0], project_dir, config.FONTS, insecure)
+		GoGEMgostatic.GoStatic(args[0], project_dir, config.FONTS, insecure)
 	},
 }
 

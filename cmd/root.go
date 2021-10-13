@@ -52,7 +52,7 @@ type Config struct {
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "goGEM",
+	Use:   "GoGEM",
 	Short: "Upload your Wiki to iGEM",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -72,7 +72,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./goGEM.json)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./GoGEM.json)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -92,13 +92,13 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".goGEM" (without extension).
+		// Search config in home directory with name ".GoGEM" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName("goGEM")
+		viper.SetConfigName("GoGEM")
 		viper.SetConfigType("json")
 
 		viper.AddConfigPath(".")  // adding current directory as second search path
-		viper.SetConfigName("goGEM")
+		viper.SetConfigName("GoGEM")
 		viper.SetConfigType("json")
 	}
 
@@ -108,7 +108,7 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	} else {
-		fmt.Println("No config file found, please create gogem.json in the current working directory, or the current user home directory.")
+		fmt.Println("No config file found, please create GoGEM.json in the current working directory, or the current user home directory.")
 		os.Exit(1)
 	}
 

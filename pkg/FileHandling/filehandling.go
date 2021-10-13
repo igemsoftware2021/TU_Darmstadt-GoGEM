@@ -1,4 +1,4 @@
-package gogemfilehandling
+package GoGEMfilehandling
 
 import (
 	"io/ioutil"
@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	h "github.com/Jackd4w/goGEM/pkg/Handler"
+	h "github.com/Jackd4w/GoGEM/pkg/Handler"
 )
 
 var blacklist = make(map[string]string) // Creates a file wide blacklist for allready uploaded files, trying to reduce the request count to the iGEM Servers.
@@ -19,25 +19,25 @@ var blacklist = make(map[string]string) // Creates a file wide blacklist for all
 	Replace pageextensions: We can not easily upload JavaScript to the server and request it, because all our Files are just pages on the iGEM Wiki and the MIME-Type has to match.
 
 */
-func PrepFilesForIGEM(teamname, root, mathjax_url string, client *h.Handler) error {
+func PrepFilesForIGEM(teamname, root, mathjax_url string, client *h.Handler) string {
 
 	// Get all files in the root directory
 	files, err := allFilesInDir(root)
 	if err != nil {
-		return err
+		return err.Error()
 	}
 
 	for _, filepath := range files {
 		println("Preparing file: " + filepath)
 		file, err := os.Open(filepath) // Open file
 		if err != nil {
-			return err
+			return err.Error()
 		}
 		defer file.Close()
 
 		content, err := ioutil.ReadAll(file) // Read file
 		if err != nil {
-			return err
+			return err.Error()
 		}
 		var newContent = string(content) // Create newContent string from content byte array
 
@@ -53,30 +53,30 @@ func PrepFilesForIGEM(teamname, root, mathjax_url string, client *h.Handler) err
 		newContent = replacePageExtensions(newContent, mathjax_url)
 
 		fileLinks := findAllFileLinks(newContent)
-		fileAssociations, err := fileUpload(fileLinks, root, client) // Output from FileUpload method takes fileLinks as input, and uploads all files to the iGEM Wiki
-		if err != nil {
-			return err
+		fileAssociations, errors := fileUpload(fileLinks, root, client) // Output from FileUpload method takes fileLinks as input, and uploads all files to the iGEM Wiki
+		if errors != "" {
+			return errors
 		}
 
 		newContent = replaceAllFileLinks(newContent, fileAssociations)
 
 		file, err = os.Create(file.Name())
 		if err != nil {
-			return err
+			return err.Error()
 		}
 		defer file.Close()
 		if _, err := file.WriteString(newContent); err != nil {
-			return err
+			return err.Error()
 		}
 	}
 	println("File Upload: Done")
 	for _, filepath := range files {
 		err := pageUpload(filepath, client)
 		if err != nil {
-			return err
+			return err.Error()
 		}
 	}
-	return nil
+	return ""
 }
 
 // Creates list of all files in a directory, and its respective subdirectories.
@@ -264,9 +264,11 @@ func replacePageExtensions(newContent, mathjax_url string) string {
 * Uses the iGEM Wiki API to upload the files through the defined handler.
 * Returns a map of the uploaded files with the original file path as key and the new url as value.
 */
-func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]string, error) {
+func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]string, string) {
 	result := make(map[string]string)
 	local_blacklist := make(map[string]bool)
+
+	errors := ""
 
 	for _, link := range fileLinks {
 		path := root + link[1:] // Remove leading slash
@@ -291,7 +293,10 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 					continue
 					// return nil, err
 				} else {
-					println("Error " + err.Error() + " uploading file: " + path)
+					err := "Error " + err.Error() + " uploading file: " + path + "\n"
+					println(err)
+					errors += err
+					continue
 				}
 			}
 			res_url = client.GetFileUrl(url)
@@ -302,7 +307,7 @@ func fileUpload(fileLinks []string, root string, client *h.Handler) (map[string]
 		blacklist[path] = res_url
 	}
 
-	return result, nil
+	return result, errors
 }
 
 /*

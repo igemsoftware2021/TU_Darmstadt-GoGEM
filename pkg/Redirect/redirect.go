@@ -1,9 +1,9 @@
-package gogemredirect
+package GoGEMredirect
 
 import (
 	"strings"
 
-	h "github.com/Jackd4w/goGEM/pkg/Handler"
+	h "github.com/Jackd4w/GoGEM/pkg/Handler"
 )
 
 /*

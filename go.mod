@@ -1,9 +1,9 @@
-module github.com/Jackd4w/goGEM
+module github.com/Jackd4w/GoGEM
 
 go 1.16
 
 require (
-	github.com/Jackd4w/goGEM-WikiAPI v0.0.1-alpha
+	github.com/Jackd4w/GoGEM-WikiAPI v0.0.1-alpha.0.20211013131443-ec9e616eb677
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.3.6 // indirect
 	github.com/elliotchance/orderedmap v1.4.0
@@ -17,4 +17,4 @@ require (
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
 )
 
-// replace github.com/Jackd4w/goGEM-WikiAPI => ../goGEM-WikiAPI
+// replace github.com/Jackd4w/GoGEM-WikiAPI => ../GoGEM-WikiAPI

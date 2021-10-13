@@ -30,7 +30,8 @@
   ],
   "CustomRedirects": [
     {
-      "education": "communication"
+      "Education": "communication",
+      "Sustainable": "excellence#GreenerLabs"
     }
   ],
   "Order": [

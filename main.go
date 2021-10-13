@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/Jackd4w/goGEM/cmd"
+import "github.com/Jackd4w/GoGEM/cmd"
 
 func main() {
 	cmd.Execute()
