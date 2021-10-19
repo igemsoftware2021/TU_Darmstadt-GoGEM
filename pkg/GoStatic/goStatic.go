@@ -114,7 +114,7 @@ func crawlDomain(url string, insecure bool) (pages, remove map[string]string, er
 
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) { // Register callback functions for all types of links
 		link := e.Attr("href")
-		if !strings.Contains(link, "impressum") {
+		if !strings.Contains(link, "impressum") && !strings.Contains(link, "wp-login") && !strings.Contains(link, "wp-admin") {
 			c.Visit(e.Request.AbsoluteURL(link))
 		}
 	})
@@ -192,7 +192,7 @@ func createFileLinks(pages map[string]string, url string) error {
 			pages[link] = "./" + filename
 		} else if strings.Contains(filetype, "text/css") {
 			filename := ""
-			if strings.Contains(link, "plugins"){
+			if strings.Contains(link, "plugins") || strings.Contains(link, "wp-includes") {
 				fragments := strings.Split(link, "/")
 				fragments = delete_empty(fragments)
 				filename = fragments[len(fragments)-2] + "-" + fragments[len(fragments)-1]
@@ -210,7 +210,7 @@ func createFileLinks(pages map[string]string, url string) error {
 			pages[link] = "./css/" + filename
 		} else if strings.Contains(filetype, "javascript") {
 			filename := ""
-			if strings.Contains(link, "plugins"){
+			if strings.Contains(link, "plugins") || strings.Contains(link, "wp-includes") {
 				fragments := strings.Split(link, "/")
 				fragments = delete_empty(fragments)
 				filename = fragments[len(fragments)-2] + "-" + fragments[len(fragments)-1]
@@ -219,9 +219,8 @@ func createFileLinks(pages map[string]string, url string) error {
 				fragments = delete_empty(fragments)
 				filename = fragments[len(fragments)-1]
 			}
-				filename = strings.Split(filename, "?")[0]
-				filename = strings.Replace(filename, ".", "-", strings.Count(filename, ".") - 1)
-			println(filename)
+			filename = strings.Split(filename, "?")[0]
+			filename = strings.Replace(filename, ".", "-", strings.Count(filename, ".")-1)
 			pages[link] = "./js/" + filename
 		} else {
 			fragments := strings.Split(link, "/")
@@ -255,7 +254,7 @@ func fetchPages(pages, remove, fonts map[string]string, path string) error {
 
 		ordered_key_list_pages := orderMapKeys(pages)
 		ordered_key_list_remove := orderMapKeys(remove)
-		
+
 		// Remove all URLs from the files specified in the remove list
 		for _, key := range ordered_key_list_remove {
 			resp_body = strings.ReplaceAll(resp_body, key, "")
@@ -273,9 +272,9 @@ func fetchPages(pages, remove, fonts map[string]string, path string) error {
 			}
 		}
 
-		filetype := resp.Header.Get("Content-Type") // Get the filetype of the response
+		filetype := resp.Header.Get("Content-Type")                                                                     // Get the filetype of the response
 		if filetype == "image/svg+xml" || (!strings.Contains(filetype, "json") && !strings.Contains(filetype, "xml")) { // Skipping JSON and XML files, as JSON is the response from the WP REST API, and XML the response of the legacy XML-RPC API
-			if strings.Contains(path, "svg"){
+			if strings.Contains(path, "svg") {
 				for key, value := range fonts {
 					if strings.Contains(resp_body, key) {
 						resp_body = strings.ReplaceAll(resp_body, key, value)

@@ -27,7 +27,7 @@ var url bool
 var checkCriteriaCMD = &cobra.Command{
 	Use:   "checkCriteria",
 	Short: "Check Medal Criteria URLs",
-	Long:  `Check if your Wiki fullfils the URL Criteria for Medals.
+	Long: `Check if your Wiki fullfils the URL Criteria for Medals.
 			Award and MedalCriteria are defined in ...
 			Usage: GoGEM checkcriteria -y [year] -t [teamname] -u [boolean]`,
 

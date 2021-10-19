@@ -20,6 +20,7 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
@@ -57,7 +58,7 @@ var uploadCmd = &cobra.Command{
 		password = string(bytePassword)
 		// Establish connection with iGEM Servers
 		println("Logging in...")
-		session, err := h.NewHandler(year, username, password, teamname, offset, config.LOGINURL, config.LOGOUTURL, config.PREFIXPAGEURL)
+		session, err := h.NewHandler(year, timeout, username, password, teamname, offset, config.LOGINURL, config.LOGOUTURL, config.PREFIXPAGEURL)
 		if err != nil {
 			if err.Error() == "loginFailed" {
 				println("Login failed, please try again")
@@ -68,6 +69,7 @@ var uploadCmd = &cobra.Command{
 		}
 		defer session.Logout()
 		println("Logged in")
+		println("Starting time: " + time.Now().String())
 
 		if redirect {
 			println("Creating redirects...")
@@ -84,9 +86,8 @@ var uploadCmd = &cobra.Command{
 			println(err.Error())
 			errors = append(errors, err.Error())
 		}
-		if delete {
-			defer cleanUp(project_path)
-		} else {
+		defer cleanUp(project_path)
+		if !clean {
 			println("Temporary files are not deleted")
 		}
 		println("Cloning successfull, begining upload...")
@@ -107,8 +108,6 @@ var uploadCmd = &cobra.Command{
 		}
 		println("Logging out")
 
-
-
 	},
 }
 
@@ -125,11 +124,11 @@ func init() {
 	uploadCmd.MarkFlagRequired("wpurl")
 	uploadCmd.Flags().StringVarP(&password, "password", "p", "", "Password")
 	uploadCmd.Flags().StringVarP(&offset, "offset", "o", "", "Offset from your Teams Namespace root")
-	uploadCmd.Flags().BoolVarP(&force, "force", "f", false, "Force")
-	uploadCmd.Flags().BoolVarP(&clean, "clean", "c", true, "Clean")
+	uploadCmd.Flags().BoolVarP(&force, "force", "f", false, "Forces upload")
+	uploadCmd.Flags().BoolVarP(&clean, "clean", "c", true, "Cleanup the temporary files")
 	uploadCmd.Flags().BoolVarP(&insecure, "insecure", "i", false, "Ignores HTTPS Certificate warnings")
-	uploadCmd.Flags().BoolVarP(&redirect, "redirect", "r", false, "Creates redirects from upper to lowercase")
-	uploadCmd.Flags().BoolVarP(&delete, "delete", "d", true, "Delete the temporary files after upload")
+	uploadCmd.Flags().BoolVarP(&redirect, "redirect", "r", false, "Creates redirects from upper to lowercase, and CustomRedirects if specified")
+	uploadCmd.Flags().IntVarP(&timeout, "timeout", "T", 60, "Timeout in seconds")
 }
 
 func cleanUp(project_dir string) {

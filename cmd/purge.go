@@ -47,7 +47,7 @@ var purgeCmd = &cobra.Command{
 
 		// Establish connection with iGEM Servers
 		println("Logging in...")
-		session, err := h.NewHandler(year, username, password, teamname, offset, config.LOGINURL, config.LOGOUTURL, config.PREFIXPAGEURL)
+		session, err := h.NewHandler(year, timeout, username, password, teamname, offset, config.LOGINURL, config.LOGOUTURL, config.PREFIXPAGEURL)
 		if err != nil {
 			if err.Error() == "loginFailed" {
 				println("Login failed, please try again")
@@ -109,6 +109,7 @@ func init() {
 
 	purgeCmd.Flags().StringVarP(&password, "password", "p", "", "Password")
 	purgeCmd.Flags().StringVarP(&offset, "offset", "o", "", "Offset from your Teams Namespace root")
+	purgeCmd.Flags().IntVarP(&timeout, "timeout", "T", 60, "Timeout in seconds")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
