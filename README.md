@@ -48,3 +48,14 @@ Please report Issues to this repo (<https://github.com/Jackd4w/GoGEM>), this is 
 ## Contribution
 
 I tried to comment the code reasonably. Please try writing verbose comments when contributing, as this is intended to be a project a beginner programmer can understand. As stated above development will only be continued on this repo (<https://github.com/Jackd4w/GoGEM>).
+
+## Required Packages
+
+Directly required non standard packages:
+
+-[GoGEM-WikiAPI](https://github.com/Jackd4w/GoGEM-WikiAPI)
+-[OrderedMap](https://github.com/elliotchance/orderedmap)
+-[Colly](https://github.com/gocolly/colly)
+-[Cobra](https://github.com/spf13/cobra)
+-[Viper](https://github.com/spf13/viper)
+-[Term](https://golang.org/x/term)
