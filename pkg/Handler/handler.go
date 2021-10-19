@@ -17,6 +17,7 @@ type Handler struct {
 	loginURL        string
 	logoutURL       string
 	prefixURL       string
+	timeout         int
 }
 
 //TODO move blacklist here, this is the place where all files pass, also this persists for the whole runtime
@@ -27,7 +28,7 @@ type Handler struct {
 
   Save Session for the runtime of the program. Minimize server requests by keeping track of uploaded files during session
 */
-func NewHandler(year int, username, password, teamname, offset, loginURL, logoutURL, prefixURL string) (*Handler, error) {
+func NewHandler(year, timeout int, username, password, teamname, offset, loginURL, logoutURL, prefixURL string) (*Handler, error) {
 	handler := new(Handler)
 
 	handler.loginURL = loginURL
@@ -37,6 +38,7 @@ func NewHandler(year int, username, password, teamname, offset, loginURL, logout
 	handler.teamname = teamname
 	handler.offset = offset
 	handler.alreadyUploaded = make(map[string]bool)
+	handler.timeout = timeout
 
 	session, err := handler.Login(username, password)
 	if err != nil {
@@ -52,7 +54,7 @@ func NewHandler(year int, username, password, teamname, offset, loginURL, logout
 	Wrappes the Login function in the API package
 */
 func (h Handler) Login(username, password string) (*http.Client, error) {
-	session, err := api.Login(username, password, h.loginURL)
+	session, err := api.Login(username, password, h.loginURL, h.timeout)
 	if err != nil {
 		return nil, err
 	}

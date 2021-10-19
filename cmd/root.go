@@ -28,6 +28,7 @@ var cfgFile string
 var config Config
 var username string
 var year int
+var timeout int
 var teamname string
 var wpurl string
 var password string
@@ -36,19 +37,17 @@ var force bool
 var clean bool
 var insecure bool
 var redirect bool
-var delete bool
 
 type Config struct {
-	URLS map[string]string `mapstructure:"urls"`
-	URLORDER []string `mapstructure:"order"`
-	FONTS map[string]string `mapstructure:"fonts"`
+	URLS            map[string]string `mapstructure:"urls"`
+	URLORDER        []string          `mapstructure:"order"`
+	FONTS           map[string]string `mapstructure:"fonts"`
 	CUSTOMREDIRECTS map[string]string `mapstructure:"customredirects"`
-	LOGINURL string `mapstructure:"loginurl"`
-	LOGOUTURL string `mapstructure:"logouturl"`
-	PREFIXPAGEURL string `mapstructure:"prefixurl"`
-	MATHJAXURL string `mapstructure:"mathjaxurl"`
+	LOGINURL        string            `mapstructure:"loginurl"`
+	LOGOUTURL       string            `mapstructure:"logouturl"`
+	PREFIXPAGEURL   string            `mapstructure:"prefixurl"`
+	MATHJAXURL      string            `mapstructure:"mathjaxurl"`
 }
-	
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -97,18 +96,18 @@ func initConfig() {
 		viper.SetConfigName("GoGEM")
 		viper.SetConfigType("json")
 
-		viper.AddConfigPath(".")  // adding current directory as second search path
+		viper.AddConfigPath(".") // adding current directory as second search path
 		viper.SetConfigName("GoGEM")
 		viper.SetConfigType("json")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-	
+
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	} else {
-		fmt.Println("No config file found, please create GoGEM.json in the current working directory, or the current user home directory.")
+		fmt.Println("No config file found, please create GoGEM.json in the current working directory, or the current users home directory.")
 		os.Exit(1)
 	}
 

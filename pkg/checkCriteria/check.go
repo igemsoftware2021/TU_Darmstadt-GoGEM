@@ -18,42 +18,43 @@ Links are defined relative to the Team main page.
 //TODO: move to API
 func createAwardMap(order []string, urls map[string]string) *orderedmap.OrderedMap {
 	m := orderedmap.NewOrderedMap()
- /*
-	m.Set("Medals", "#")
-	m.Set("Bronze #2 (Attributions)", "Attributions")
-	m.Set("Bronze #3 (Project Description)", "Description")
-	m.Set("Bronze #4 (Contribution)", "Contribution")
-	m.Set("Silver #1 (Engineering Success)", "Engineering")
-	m.Set("Silver #2 (Collaboration)", "Collaborations")
-	m.Set("Silver #3 (Human Practices)", "Human_Practices")
-	m.Set("Silver #4 (Proposed Implementation)", "Implementation")
-	m.Set("Gold #1 (Integrated Human Practices)", "Human_Practices")
-	m.Set("Gold #3 (Project Modeling)", "Model")
-	m.Set("Gold #4 (Proof of Concept)", "Proof_Of_Concept")
-	m.Set("Gold #5 (Partnership)", "Partnership")
-	m.Set("Gold #6 (Education & Communication)", "Communication")
-	m.Set("Special", "#")
-	m.Set("Best Education", "Education")
-	m.Set("Best Hardware", "Hardware")
-	m.Set("Inclusivity Award", "Inclusivity")
-	m.Set("Best HP", "Human_Practices")
-	m.Set("Best Measurement", "Measurement")
-	m.Set("Best Model", "Model")
-	m.Set("Best Plant SynBio", "Plant")
-	m.Set("Best Software Tool", "Software")
-	m.Set("Best Supporting Entrepreneurship", "Entrepreneurship")
-	m.Set("Best Sustainable Development Impact", "Sustainable")
-	m.Set("Safety and Security Award", "Safety")
-*/
+	/*
+		m.Set("Medals", "#")
+		m.Set("Bronze #2 (Attributions)", "Attributions")
+		m.Set("Bronze #3 (Project Description)", "Description")
+		m.Set("Bronze #4 (Contribution)", "Contribution")
+		m.Set("Silver #1 (Engineering Success)", "Engineering")
+		m.Set("Silver #2 (Collaboration)", "Collaborations")
+		m.Set("Silver #3 (Human Practices)", "Human_Practices")
+		m.Set("Silver #4 (Proposed Implementation)", "Implementation")
+		m.Set("Gold #1 (Integrated Human Practices)", "Human_Practices")
+		m.Set("Gold #3 (Project Modeling)", "Model")
+		m.Set("Gold #4 (Proof of Concept)", "Proof_Of_Concept")
+		m.Set("Gold #5 (Partnership)", "Partnership")
+		m.Set("Gold #6 (Education & Communication)", "Communication")
+		m.Set("Special", "#")
+		m.Set("Best Education", "Education")
+		m.Set("Best Hardware", "Hardware")
+		m.Set("Inclusivity Award", "Inclusivity")
+		m.Set("Best HP", "Human_Practices")
+		m.Set("Best Measurement", "Measurement")
+		m.Set("Best Model", "Model")
+		m.Set("Best Plant SynBio", "Plant")
+		m.Set("Best Software Tool", "Software")
+		m.Set("Best Supporting Entrepreneurship", "Entrepreneurship")
+		m.Set("Best Sustainable Development Impact", "Sustainable")
+		m.Set("Safety and Security Award", "Safety")
+	*/
 	for _, key := range order {
 		m.Set(key, urls[key])
 	}
 	return m
 }
+
 /*
 * Checks if a page is reachable via the URLs defined in ... and returns if it is reachable and if the "DO NOT JUDGE" hint has been removed.
 * Returns a formated string with the result.
-*/
+ */
 func CheckCriteria(order []string, urls map[string]string, team string, year int, url bool) (string, error) {
 	result := ""
 	var err error
