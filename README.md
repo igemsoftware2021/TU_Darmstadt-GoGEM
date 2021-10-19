@@ -7,6 +7,8 @@
 GoGEM is a tool designed to make the deployment process of your iGEM-Wiki as easy as possible.
 It is able to automatically fetch a page from a WordPress Instance hosted by your team. If you use this tool please give credit to me and link to this repo (<https://github.com/Jackd4w/GoGEM>).
 
+**For detailed information about this tool visit our [iGEM Wiki](https://2021.igem.org/Team:TU_Darmstadt/software) and check out the [wiki guide](https://2021.igem.org/wiki/images/7/70/T--TU_Darmstadt--GoGEM-How-to-Wiki-the-Darmstadt-Way.pdf)!**
+
 ## Installation
 
 To install this programm you can use the _go install github.com/Jackd4w/GoGEM_ command.
