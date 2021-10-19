@@ -53,9 +53,9 @@ I tried to comment the code reasonably. Please try writing verbose comments when
 
 Directly required non standard packages:
 
--[GoGEM-WikiAPI](https://github.com/Jackd4w/GoGEM-WikiAPI)
--[OrderedMap](https://github.com/elliotchance/orderedmap)
--[Colly](https://github.com/gocolly/colly)
--[Cobra](https://github.com/spf13/cobra)
--[Viper](https://github.com/spf13/viper)
--[Term](https://golang.org/x/term)
+*[GoGEM-WikiAPI](https://github.com/Jackd4w/GoGEM-WikiAPI)
+*[OrderedMap](https://github.com/elliotchance/orderedmap)
+*[Colly](https://github.com/gocolly/colly)
+*[Cobra](https://github.com/spf13/cobra)
+*[Viper](https://github.com/spf13/viper)
+*[Term](https://golang.org/x/term)
